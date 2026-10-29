@@ -1,0 +1,63 @@
+---
+/**
+ * 도입과 운영 — 6단계 프로세스 · 도입 후 달라지는 것 · GRIB 이 다른 점
+ * 화면 고정 없이 일반 흐름으로 읽힙니다.
+ */
+import Step from '../components/ui/Step.astro';
+import { scale as s } from '../data/content';
+---
+
+<section class="scene-sec sc2-sec" aria-labelledby="scale-title">
+  <Step step={s.step} layout="carousel" class="sc2-step">
+    <div class="sc2-wrap">
+      <header class="sc2-head">
+        <p class="sec-kicker">{s.kicker}</p>
+        <h2 id="scale-title" class="sec-title">
+          {s.heading.map((l, i) => <span class:list={{ 'sec-accent': i === 1 }}>{l}</span>)}
+        </h2>
+        <p class="sec-sub pre-d">{s.sub}</p>
+      </header>
+
+      <ol class="sc2-proc" aria-label="도입 단계">
+        {
+          s.process.map((pr, i) => (
+            <li>
+              <span class="sc2-n tnum">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{pr.title}</h3>
+              <p>{pr.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="sc2-block">
+        <h3 class="sc2-label">도입 후 달라지는 점</h3>
+        <ul class="sc2-effects">
+          {
+            s.effects.map((e) => (
+              <li>
+                <b>{e.title}</b>
+                <p>{e.body}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="sc2-block">
+        <h3 class="sc2-label">GRIB의 차별점</h3>
+        <ul class="sc2-trust">
+          {
+            s.trust.map((t) => (
+              <li>
+                <b>{t.title}</b>
+                <p>{t.body}</p>
+                {t.chips && <span class="sc2-chips">{t.chips.map((c) => <i>{c}</i>)}</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Step>
+</section>

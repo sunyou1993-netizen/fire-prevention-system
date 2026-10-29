@@ -1,0 +1,175 @@
+---
+/**
+ * 단체급식 주방 일러스트 (16:10, viewBox 1600×1000).
+ * 실제 주방 영상/사진이 준비되기 전까지 무대의 배경 역할을 합니다.
+ * kitchenMedia.video 가 설정되면 데스크톱에서는 영상이 이 위를 덮습니다.
+ *
+ * 스크롤 상태에 따라 움직이는 부분은 class 로 노출합니다.
+ *   .k-worker  조리원 (away 플래그에서 출입문으로 이동)
+ *   .k-steam   조리 증기
+ *   .k-haze    공기질 악화 표현
+ *   .k-pipe    가스 배관 (valve-off 에서 흐름 정지)
+ */
+const kettle = (cx: number, id: string, main = false) => ({ cx, id, main });
+const kettles = [kettle(420, 'k-kettle-2'), kettle(880, 'k-kettle-main', true)];
+---
+
+<svg
+  class="kitchen-svg"
+  viewBox="0 0 1600 1000"
+  preserveAspectRatio="xMidYMid slice"
+  role="img"
+  aria-labelledby="kitchen-svg-title"
+>
+  <title id="kitchen-svg-title">단체급식 주방: 후드 아래 대형 회전식 국솥 두 대와 조리원, 벽면에 설치된 감지 장비</title>
+  <defs>
+    <linearGradient id="k-wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1f4f7" />
+      <stop offset="1" stop-color="#e7ecf0" />
+    </linearGradient>
+    <linearGradient id="k-floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d3dae1" />
+      <stop offset="1" stop-color="#c4cdd6" />
+    </linearGradient>
+    <linearGradient id="k-steel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#aeb9c4" />
+      <stop offset="0.35" stop-color="#eef2f5" />
+      <stop offset="0.6" stop-color="#cfd7de" />
+      <stop offset="1" stop-color="#9eabb8" />
+    </linearGradient>
+    <linearGradient id="k-hood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dfe5ea" />
+      <stop offset="1" stop-color="#c9d2da" />
+    </linearGradient>
+    <linearGradient id="k-soup" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d9772f" />
+      <stop offset="0.5" stop-color="#ee9a4c" />
+      <stop offset="1" stop-color="#d06f2a" />
+    </linearGradient>
+    <pattern id="k-tile" width="64" height="40" patternUnits="userSpaceOnUse">
+      <rect width="64" height="40" fill="#e9eef2" />
+      <path d="M0 0.5H64M0.5 0V40" stroke="#d9e0e6" stroke-width="1" />
+    </pattern>
+    <filter id="k-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="28" />
+    </filter>
+  </defs>
+
+  <!-- 벽 / 천장 / 바닥 -->
+  <rect width="1600" height="820" fill="url(#k-wall)" />
+  <rect y="430" width="1600" height="390" fill="url(#k-tile)" />
+  <rect width="1600" height="84" fill="#e2e7ec" />
+  <g fill="#ffffff" opacity="0.9">
+    <rect x="160" y="36" width="260" height="14" rx="7" />
+    <rect x="680" y="36" width="260" height="14" rx="7" />
+    <rect x="1200" y="36" width="260" height="14" rx="7" />
+  </g>
+  <rect y="820" width="1600" height="180" fill="url(#k-floor)" />
+  <g stroke="#bcc6cf" stroke-width="2" opacity="0.7">
+    <path d="M0 820H1600" />
+    <path d="M0 900H1600" opacity="0.5" />
+    <path d="M300 820 180 1000M700 820 650 1000M1100 820 1130 1000M1450 820 1560 1000" opacity="0.5" />
+  </g>
+
+  <!-- 출입문 -->
+  <g>
+    <rect x="36" y="370" width="150" height="450" fill="#d9e0e6" />
+    <rect x="46" y="380" width="130" height="440" fill="#e8edf1" stroke="#c6cfd8" stroke-width="2" />
+    <rect x="70" y="420" width="82" height="110" rx="4" fill="#cfe2ef" opacity="0.7" />
+    <rect x="152" y="600" width="12" height="40" rx="4" fill="#9aa7b4" />
+  </g>
+
+  <!-- 벽 환풍구 (환풍기 장비 위치) -->
+  <rect x="1125" y="137" width="86" height="86" rx="6" fill="#d7dee5" stroke="#c3ccd5" stroke-width="2" />
+
+  <!-- 후드 -->
+  <g>
+    <rect x="250" y="96" width="860" height="150" fill="url(#k-hood)" />
+    <path d="M250 246H1110L1090 304H270Z" fill="#c2ccd5" />
+    <path d="M270 304H1090" stroke="#a7b3bf" stroke-width="3" />
+    <g fill="#fbfdff" opacity="0.85">
+      <rect x="360" y="296" width="120" height="6" rx="3" />
+      <rect x="800" y="296" width="120" height="6" rx="3" />
+    </g>
+    <path d="M250 150H1110" stroke="#cdd5dd" stroke-width="2" />
+  </g>
+
+  <!-- 우측 작업대 -->
+  <g>
+    <rect x="1130" y="690" width="300" height="20" rx="3" fill="url(#k-steel)" />
+    <rect x="1140" y="710" width="280" height="110" fill="#d6dde4" />
+    <path d="M1140 765H1420" stroke="#c2ccd5" stroke-width="2" />
+    <rect x="1150" y="820" width="10" height="20" fill="#a3afbb" />
+    <rect x="1400" y="820" width="10" height="20" fill="#a3afbb" />
+    <rect x="1180" y="650" width="70" height="40" rx="4" fill="#c9d3dc" />
+    <rect x="1270" y="664" width="110" height="26" rx="4" fill="#dbe2e8" />
+  </g>
+
+  <!-- 가스 배관 -->
+  <g class="k-pipe">
+    <path d="M940 790V850H1600" fill="none" stroke="#9eabb7" stroke-width="10" stroke-linecap="round" />
+    <path class="k-pipe-flow" d="M940 790V850H1600" fill="none" stroke="#c6d3de" stroke-width="3" stroke-dasharray="10 18" />
+    <path d="M480 790V850H940" fill="none" stroke="#9eabb7" stroke-width="10" stroke-linecap="round" />
+  </g>
+
+  <!-- 회전식 국솥 -->
+  {
+    kettles.map((k) => (
+      <g id={k.id} class={k.main ? 'k-kettle k-kettle--main' : 'k-kettle'}>
+        <rect x={k.cx - 160} y={520} width="18" height="320" rx="6" fill="#b3bfca" />
+        <rect x={k.cx + 142} y={520} width="18" height="320" rx="6" fill="#a6b3bf" />
+        <rect x={k.cx - 160} y={600} width="320" height="12" rx="6" fill="#bac5cf" />
+        <rect x={k.cx - 172} y={830} width="42" height="14" rx="4" fill="#94a2b0" />
+        <rect x={k.cx + 130} y={830} width="42" height="14" rx="4" fill="#94a2b0" />
+        <circle cx={k.cx + 192} cy={606} r="30" fill="none" stroke="#9aa8b5" stroke-width="7" />
+        <path d={`M${k.cx + 162} 606H${k.cx + 222}M${k.cx + 192} 576V636`} stroke="#9aa8b5" stroke-width="4" />
+        <path
+          d={`M${k.cx - 136} 562 Q${k.cx - 140} 704 ${k.cx} 710 Q${k.cx + 140} 704 ${k.cx + 136} 562 Z`}
+          fill="url(#k-steel)"
+        />
+        <ellipse cx={k.cx} cy={562} rx="138" ry="26" fill="#eef2f5" stroke="#a5b1bd" stroke-width="3" />
+        <ellipse cx={k.cx} cy={565} rx="122" ry="19" fill="url(#k-soup)" class={k.main ? 'k-soup' : ''} />
+        <rect x={k.cx - 64} y={708} width="128" height="82" rx="6" fill="#c3cdd6" />
+        <rect x={k.cx - 46} y={724} width="56" height="22" rx="3" fill="#2f3b47" />
+        <circle cx={k.cx + 30} cy={735} r="7" fill="#8e9cab" />
+      </g>
+    ))
+  }
+
+  <!-- 조리 증기 -->
+  <g class="k-steam" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.75">
+    <path d="M840 530c-14-30 14-46 0-80s14-50 0-84" />
+    <path d="M884 520c-14-30 14-46 0-80s14-50 0-80" />
+    <path d="M928 530c-14-30 14-46 0-80s14-50 0-76" />
+  </g>
+
+  <!-- 조리원 -->
+  <g class="k-worker">
+    <!-- 패들 -->
+    <path d="M748 594 L846 548" stroke="#8a6d4f" stroke-width="9" stroke-linecap="round" />
+    <!-- 다리 -->
+    <rect x="652" y="700" width="30" height="132" rx="10" fill="#33404d" />
+    <rect x="690" y="700" width="30" height="132" rx="10" fill="#2c3844" />
+    <rect x="644" y="822" width="44" height="18" rx="8" fill="#1f2a35" />
+    <rect x="684" y="822" width="44" height="18" rx="8" fill="#1f2a35" />
+    <!-- 상의 -->
+    <path d="M640 560 Q686 532 732 560 L740 716 H634 Z" fill="#ffffff" stroke="#c9d2da" stroke-width="2" />
+    <path d="M660 600 H716 L722 716 H654 Z" fill="#e7edf2" />
+    <path d="M686 560 V700" stroke="#d3dbe2" stroke-width="2" />
+    <!-- 팔 -->
+    <path d="M722 572 Q760 590 752 600" stroke="#ffffff" stroke-width="26" stroke-linecap="round" fill="none" />
+    <circle cx="756" cy="598" r="11" fill="#e3c19e" />
+    <!-- 머리 / 위생모 -->
+    <rect x="676" y="534" width="20" height="16" fill="#e3c19e" />
+    <circle cx="686" cy="512" r="28" fill="#e9c9a6" />
+    <path d="M660 498 Q686 486 712 498 L712 480 Q714 446 686 448 Q658 446 660 480 Z" fill="#ffffff" stroke="#cdd5dc" stroke-width="2" />
+    <rect x="650" y="514" width="72" height="18" rx="6" fill="#dbe8f2" opacity="0.9" />
+  </g>
+
+  <!-- 공기질 악화 표현 -->
+  <g class="k-haze" filter="url(#k-blur)" fill="#8f98a1">
+    <ellipse cx="520" cy="360" rx="340" ry="120" />
+    <ellipse cx="980" cy="330" rx="320" ry="110" />
+    <ellipse cx="300" cy="520" rx="220" ry="90" />
+  </g>
+</svg>

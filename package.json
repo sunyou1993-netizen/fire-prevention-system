@@ -1,0 +1,22 @@
+{
+  "name": "grib-kitchen-safety",
+  "version": "1.0.0",
+  "description": "GRIB 단체급식 주방 화재 예방 + 공기질 통합관리 솔루션 상세페이지",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.1",
+    "pretendard": "^1.3.9",
+    "sharp": "^0.35.5"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.3"
+  }
+}

@@ -1,0 +1,19 @@
+---
+/** SCENE 02 — 실제 시스템 작동: 같은 주방에서 감지 → 판단 → 차단 → 알림 */
+import Step from '../components/ui/Step.astro';
+import { operation } from '../data/content';
+---
+
+<section class="scene-sec" aria-labelledby="operation-title">
+  <h2 id="operation-title" class="sr-only">{operation.heading}</h2>
+  {
+    operation.steps.map((s) => (
+      <Step step={s as any} layout="film">
+        <p class={`op-kicker op-kicker--${(s as any).area}`}>{operation.areas[(s as any).area]}</p>
+        <h3 class="t-h3">{s.title}</h3>
+        <p class="t-lead pre-d">{s.body}</p>
+        {'note' in s && s.note && <p class="t-note pre-d">{s.note}</p>}
+      </Step>
+    ))
+  }
+</section>

@@ -1,0 +1,105 @@
+---
+/**
+ * SCENE 03 — 실제 운영 사례 (아워홈)
+ * 데스크톱: 화면이 고정된 채 스크롤하면 카드가 가로로 지나갑니다 (src/scripts/carousel.ts).
+ * 모바일:   손가락으로 넘기는 가로 캐러셀.
+ * 카드: 도입 경과(마일스톤) · 적용 사례 · 담당자 후기 · 전체 실적 — content.ts → caseStudy.cards
+ */
+import { Image } from 'astro:assets';
+import Step from '../components/ui/Step.astro';
+import { caseStudy as cs } from '../data/content';
+import { site } from '../data/site';
+const cards = cs.cards.filter((c) => site.showPlaceholders || !c.placeholder);
+---
+
+<section class="scene-sec case-sec" aria-labelledby="case-title">
+  <Step step={cs.step} layout="carousel" class="cc-step">
+    <div class="cc-pin" data-carousel>
+      <header class="cc-head">
+        <div class="cc-head-main">
+          <p class="cc-customer">
+            {
+              cs.customerLogo ? (
+                <Image src={cs.customerLogo} alt={cs.customer.name} height={28} class="cc-logo" />
+              ) : (
+                <b>{cs.customer.name}</b>
+              )
+            }
+            <span>{cs.customer.type} · 운영 사례</span>
+          </p>
+          <h2 id="case-title" class="cc-title">
+            {cs.title.map((l, i) => <>{l}{i < cs.title.length - 1 && <br />}</>)}
+          </h2>
+        </div>
+        <dl class="cc-stats">
+          {
+            cs.stats.map((st) => (
+              <div>
+                <dt class="tnum">
+                  <b>{st.value}</b>
+                  <span>{st.unit}</span>
+                </dt>
+                <dd>{st.note}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </header>
+
+      <div class="cc-viewport">
+        <ol class="cc-track" data-track>
+          {
+            cards.map((c, i) => (
+              <li class:list={['cc-card', `cc-card--${c.media}`, c.tone && `cc-tone--${c.tone}`]} style={`--i:${i}`}>
+                <div class="cc-media">
+                  {c.media === 'photo' && c.image && (
+                    <>
+                      <Image src={c.image} alt="" widths={[400, 720]} sizes="400px" loading="lazy" class="cc-photo" />
+                      {c.imageExample && <span class="cc-tag">{cs.exampleImageLabel}</span>}
+                    </>
+                  )}
+                  {c.media === 'stat' && c.stat && (
+                    <div class="cc-ui cc-ui--stat">
+                      {c.stat.image && (
+                        <div class="cc-ui-img">
+                          <Image src={c.stat.image} alt="" widths={[320, 560]} sizes="260px" loading="lazy" />
+                        </div>
+                      )}
+                      <p class="cc-ui-num tnum"><b>{c.stat.value}</b>{c.stat.unit && <span>{c.stat.unit}</span>}</p>
+                      {c.stat.note && <p class="cc-ui-note">{c.stat.note}</p>}
+                    </div>
+                  )}
+                  {c.media === 'quote' && c.quote && (
+                    <blockquote class="cc-ui cc-ui--quote">
+                      <span class="cc-ui-mark" aria-hidden="true">“</span>
+                      <p class:list={['cc-ui-quote', { 'is-placeholder': c.placeholder }]}>{c.quote.text}</p>
+                      <footer>{c.quote.by}</footer>
+                    </blockquote>
+                  )}
+                  {c.media === 'total' && c.totals && (
+                    <div class="cc-totals">
+                      {c.totals.map((t) => (
+                        <p class="tnum"><b>{t.value}</b><span>{t.unit}</span></p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div class="cc-cap">
+                  <p class="cc-kicker">{c.kicker}</p>
+                  <h3 class="cc-title-sm">{c.title}</h3>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <footer class="cc-foot">
+        <div class="cc-progress" aria-hidden="true"><i data-progress></i></div>
+        <p class="cc-source">
+          출처 {cs.sources.map((src, i) => <>{i > 0 && ' · '}<a href={src.url} target="_blank" rel="noopener">{src.label}</a></>)}
+        </p>
+      </footer>
+    </div>
+  </Step>
+</section>

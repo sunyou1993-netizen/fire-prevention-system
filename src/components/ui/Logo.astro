@@ -1,0 +1,26 @@
+---
+/**
+ * GRIB 공식 로고 (src/assets/brand/grib-logo.png)
+ * tone="gray": 푸터 등 보조 영역용 회색 처리
+ */
+import { Image } from 'astro:assets';
+import logo from '../../assets/brand/grib-logo.png';
+interface Props {
+  tone?: 'blue' | 'gray';
+}
+const { tone = 'blue' } = Astro.props;
+---
+
+<Image src={logo} alt="GRIB" class:list={['logo', `logo--${tone}`]} height={68} widths={[88, 176]} sizes="88px" format="webp" quality={90} loading="eager" />
+
+<style>
+  .logo {
+    display: block;
+    height: 100%;
+    width: auto;
+  }
+  .logo--gray {
+    filter: grayscale(1) brightness(0.55);
+    opacity: 0.7;
+  }
+</style>

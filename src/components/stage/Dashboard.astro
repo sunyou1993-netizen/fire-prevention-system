@@ -1,0 +1,115 @@
+---
+/**
+ * ALLSAFER 관제 화면.
+ * - kitchen 뷰 + alert 플래그 : 주방 화면 구석의 작은 알림 카드
+ * - dash 뷰                  : 알림 카드가 커지며 운영 대시보드 전체로 확장 (REAL CASE)
+ * - compact 뷰               : 대시보드가 간결한 요약 패널로 축소 (VALUE)
+ *
+ * caseStudy.dashboardShot 에 실제 운영 화면 캡처를 넣으면 예시 화면 대신 사용합니다.
+ */
+import { Image } from 'astro:assets';
+import { caseStudy } from '../../data/content';
+import { site } from '../../data/site';
+
+const events = [
+  { t: '12초 전', label: '경광등·경고음 작동', tone: 'bad' },
+  { t: '12초 전', label: '과열 감지 231℃ — 2번 솥', tone: 'bad' },
+  { t: '41초 전', label: '조리원 부재 감지 — Radar', tone: 'warn' },
+  { t: '08:12', label: '공기질 정상 — PM2.5 18㎍/㎥', tone: 'ok' },
+  { t: '07:55', label: '전 장비 점검 완료', tone: 'ok' },
+];
+const chain = [
+  { k: '감지', d: '조리원 부재 · Radar' },
+  { k: '판단', d: '과열 231℃ · IR' },
+  { k: '차단', d: '가스 밸브 OFF' },
+  { k: '알림', d: 'PC · 모바일' },
+];
+const sites = ['SITE 01', 'SITE 02', 'SITE 03', 'SITE 04', 'SITE 05'];
+---
+
+<div class="dash">
+  <div class="dash-bar">
+    <b class="dash-brand">{site.platform}</b>
+    <span class="dash-title">통합관제</span>
+    <span class="dash-site">SITE 01 조리실</span>
+    {!caseStudy.dashboardShot && <span class="dash-tag">{caseStudy.dashboardTag}</span>}
+  </div>
+
+  <!-- 알림 카드: 주방 화면 → 대시보드 이벤트 목록 첫 항목으로 이동 -->
+  <div class="dash-alert">
+    <span class="dash-alert-icon"></span>
+    <div>
+      <b>가스 밸브 자동 차단</b>
+      <span>SITE 01 조리실 · 2번 솥 · 방금</span>
+    </div>
+  </div>
+
+  <div class="dash-console">
+    {
+      caseStudy.dashboardShot ? (
+        <Image class="dash-shot" src={caseStudy.dashboardShot} alt={caseStudy.dashboardCaption} widths={[640, 1280]} sizes="(min-width: 1024px) 56vw, 100vw" />
+      ) : (
+        <>
+          <div class="dash-plan">
+            <p class="dash-h">조리실 배치도</p>
+            <svg viewBox="0 0 320 200" class="plan">
+              <rect x="6" y="6" width="308" height="188" rx="6" class="plan-room" />
+              <rect x="60" y="14" width="176" height="34" rx="3" class="plan-hood" />
+              <circle cx="104" cy="104" r="30" class="plan-kettle" />
+              <circle cx="190" cy="104" r="30" class="plan-kettle plan-kettle--alert" />
+              <rect x="240" y="120" width="64" height="50" rx="3" class="plan-table" />
+              <rect x="6" y="80" width="10" height="64" class="plan-door" />
+              <circle cx="146" cy="44" r="6" class="plan-dev" />
+              <circle cx="210" cy="44" r="6" class="plan-dev" />
+              <circle cx="214" cy="178" r="6" class="plan-dev plan-dev--alert" />
+              <circle cx="260" cy="70" r="6" class="plan-dev plan-dev--alert" />
+              <circle cx="58" cy="90" r="6" class="plan-dev" />
+              <circle cx="40" cy="36" r="6" class="plan-dev" />
+              <circle cx="296" cy="100" r="6" class="plan-dev" />
+              <circle cx="190" cy="104" r="44" class="plan-ring" />
+            </svg>
+          </div>
+          <div class="dash-events">
+            <p class="dash-h">이벤트</p>
+            <ol>
+              {events.map((e) => <li class={`ev ev--${e.tone}`}><span class="tnum">{e.t}</span>{e.label}</li>)}
+            </ol>
+          </div>
+          <div class="dash-kpis">
+            <p><span>연결 장비</span><b class="tnum">9</b></p>
+            <p><span>정상</span><b class="tnum">8</b></p>
+            <p class="kpi-bad"><span>경보</span><b class="tnum">1</b></p>
+            <p><span>공기질</span><b>좋음</b></p>
+          </div>
+        </>
+      )
+    }
+  </div>
+
+  <!-- VALUE 요약 패널 -->
+  <div class="dash-compact">
+    <div class="pane pane-v1">
+      <ol class="chain">
+        {chain.map((c) => <li><b>{c.k}</b><span>{c.d}</span></li>)}
+      </ol>
+      <p class="pane-note">사람이 발견하기 전에 끝나는 대응</p>
+    </div>
+    <div class="pane pane-v2">
+      <ul class="site-list">
+        {sites.map((s, i) => <li class={i === 0 ? 'is-alert' : ''}><span>{s}</span><em>{i === 0 ? '자동 차단 완료' : '정상'}</em></li>)}
+      </ul>
+    </div>
+    <div class="pane pane-v3">
+      <div class="meter">
+        <p class="meter-k">화재 위험</p>
+        <p class="meter-v tnum">165<small>℃</small></p>
+        <p class="meter-s">정상 · 조리원 조리 중</p>
+      </div>
+      <div class="meter">
+        <p class="meter-k">공기질</p>
+        <p class="meter-v tnum">18<small>㎍/㎥</small></p>
+        <p class="meter-s">좋음 · 환풍기 자동 운전</p>
+      </div>
+    </div>
+  </div>
+</div>

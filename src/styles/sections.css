@@ -1,0 +1,143 @@
+/* ---------- 공통: 섹션 소제목 · 제목 (모든 정보 섹션이 같은 규칙을 씁니다) ---------- */
+.sec-kicker {
+  margin: 0 0 14px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--grib-blue);
+}
+.sec-title {
+  display: grid;
+  margin: 0;
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.035em;
+  color: #191f28;
+}
+.sec-accent { color: var(--grib-blue-deep); }
+.sec-sub {
+  max-width: 34em;
+  margin: 18px 0 0;
+  font-size: clamp(1.0625rem, 0.95rem + 0.35vw, 1.25rem);
+  line-height: 1.6;
+  color: #4e5968;
+}
+
+/* 고정 화면이 아닌 일반 흐름 섹션 (Step 의 기본 카드 스타일 해제) */
+:is(.pb-step, .sc2-step),
+.story.is-ready :is(.pb-step, .sc2-step) .step-inner,
+:is(.pb-step, .sc2-step) .step-inner {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  opacity: 1;
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ---------- 왜 필요한가 ---------- */
+.pb-sec { background: #fff; }
+.pb-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: calc(var(--header-h) + 56px) var(--gutter) 72px;
+}
+.pb-list {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.pb-item {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 36px 36px 30px;
+  border-radius: 28px;
+  background: #f6f8fa;
+}
+.pb-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.pb-item--fire .pb-label { color: #e8590c; }
+.pb-item--air .pb-label { color: var(--grib-blue); }
+.pb-value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 6px 0 10px;
+  color: #191f28;
+}
+.pb-value b {
+  font-size: clamp(4rem, 2.6rem + 4.2vw, 6.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.pb-value span { font-size: clamp(1.5rem, 1.1rem + 1vw, 2.25rem); font-weight: 700; }
+.pb-h {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.625rem);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+  color: #191f28;
+}
+.pb-body { margin: 0; font-size: 1.0625rem; line-height: 1.6; color: #4e5968; }
+.pb-src { margin: 14px 0 0; font-size: 0.875rem; color: #8b95a1; }
+.pb-src a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.pb-closing {
+  margin: 36px 0 0;
+  font-size: clamp(1.375rem, 1.1rem + 0.9vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #191f28;
+}
+@media (max-width: 1023px) {
+  .pb-wrap { padding: calc(var(--header-h) + 48px) 20px 80px; }
+  .pb-list { grid-template-columns: 1fr; margin-top: 36px; gap: 14px; }
+  .pb-item { padding: 26px 22px 22px; border-radius: 22px; }
+  .pb-closing { margin-top: 36px; }
+}
+
+/* 사례 제목도 같은 크기 체계 */
+.cc-title { font-size: clamp(2rem, 1.2rem + 2.4vw, 3.5rem) !important; line-height: 1.22 !important; letter-spacing: -0.035em !important; }
+@media (max-width: 1023px) { .cc-title { font-size: 1.75rem !important; } }
+
+/* 배경 사진: 흑백 사진 위 어두운 오버레이 — 불길만 밝게 남아 위험이 읽히도록 */
+.pb-step { position: relative; overflow: hidden; }
+.pb-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: #0d1014; }
+.pb-bg img { width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; filter: grayscale(1) contrast(1.2) brightness(0.85); opacity: 0.8; }
+.pb-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(13, 16, 20, 0.92) 0%, rgba(13, 16, 20, 0.68) 45%, rgba(13, 16, 20, 0.2) 100%),
+    linear-gradient(180deg, rgba(13, 16, 20, 0.5) 0%, rgba(13, 16, 20, 0) 35%, rgba(13, 16, 20, 0) 65%, rgba(13, 16, 20, 0.7) 100%);
+}
+.pb-wrap { position: relative; z-index: 1; }
+.pb-sec:has(.pb-bg) { background: #0d1014; }
+.pb-bg ~ .pb-wrap .sec-kicker { color: #6cc4ff; }
+.pb-bg ~ .pb-wrap .sec-title { color: #fff; }
+.pb-bg ~ .pb-wrap .sec-accent { color: #6cc4ff; }
+.pb-bg ~ .pb-wrap .pb-item {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+}
+.pb-bg ~ .pb-wrap .pb-value,
+.pb-bg ~ .pb-wrap .pb-h,
+.pb-bg ~ .pb-wrap .pb-closing { color: #fff; }
+.pb-bg ~ .pb-wrap .pb-body { color: rgba(255, 255, 255, 0.74); }
+.pb-bg ~ .pb-wrap .pb-src { color: rgba(255, 255, 255, 0.5); }
+.pb-bg ~ .pb-wrap .pb-item--fire .pb-label { color: #ff8a4c; }
+.pb-bg ~ .pb-wrap .pb-item--air .pb-label { color: #6cc4ff; }

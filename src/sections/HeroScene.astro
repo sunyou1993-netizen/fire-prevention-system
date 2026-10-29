@@ -1,0 +1,19 @@
+---
+/** SCENE 01 — HERO: 실제 주방 Scene 위 최소한의 메시지 */
+import Step from '../components/ui/Step.astro';
+import { hero } from '../data/content';
+---
+
+<section class="scene-sec" aria-labelledby="hero-title">
+  <Step step={hero.step} size="tall" layout="full">
+    <p class="kicker">{hero.label}</p>
+    <h1 id="hero-title" class="t-display">
+      {hero.title.map((l, i) => <>{l.split(/(?<=,) /).map((w) => <><span class="nobr">{w}</span>{" "}</>)}{i < hero.title.length - 1 && <br />}</>)}
+    </h1>
+    <p class="t-lead pre-line">{hero.sub}</p>
+    <a class="hero-cta" href={hero.cta.href}>
+      {hero.cta.label}
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    </a>
+  </Step>
+</section>

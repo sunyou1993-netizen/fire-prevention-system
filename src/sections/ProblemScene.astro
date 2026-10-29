@@ -1,0 +1,48 @@
+---
+/** SCENE 02 — 왜 필요한가: 화재와 공기질, 출처가 있는 수치 두 개 */
+import Step from '../components/ui/Step.astro';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { problem as p } from '../data/content';
+// 배경 사진(선택): public/media/problem-bg.jpg 를 넣으면 흑백 오버레이로 깔립니다
+const bg = ['problem-bg.webp', 'problem-bg.jpg', 'problem-bg.png'].find((f) => existsSync(join(process.cwd(), 'public/media', f)));
+---
+
+<section class="scene-sec pb-sec" aria-labelledby="pb-title">
+  <Step step={p.step} layout="carousel" class="pb-step">
+    {bg && (
+      <div class="pb-bg" aria-hidden="true">
+        <img src={`/media/${bg}`} alt="" loading="lazy" decoding="async" />
+      </div>
+    )}
+    <div class="pb-wrap">
+      <header class="pb-head">
+        <p class="sec-kicker">{p.kicker}</p>
+        <h2 id="pb-title" class="sec-title">
+          {p.heading.map((l, i) => <span class:list={{ 'sec-accent': i === 1 }}>{l}</span>)}
+        </h2>
+      </header>
+
+      <ul class="pb-list">
+        {
+          p.items.map((it) => (
+            <li class={`pb-item pb-item--${it.id}`}>
+              <p class="pb-label">{it.label}</p>
+              <p class="pb-value tnum">
+                <b>{it.value}</b>
+                <span>{it.unit}</span>
+              </p>
+              <h3 class="pb-h pre-d">{it.title}</h3>
+              <p class="pb-body pre-d">{it.body}</p>
+              <p class="pb-src">
+                출처 · <a href={it.url} target="_blank" rel="noopener noreferrer">{it.source}</a>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="pb-closing">{p.closing}</p>
+    </div>
+  </Step>
+</section>

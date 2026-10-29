@@ -1,0 +1,373 @@
+/*
+ * SCENE 06 — 시스템 구성도 (현장 움직임 + 위험 이벤트 데모)
+ * .arch[data-phase=normal|rising|danger|response|recovery] ← scripts/architecture.ts
+ * 정상: Blue / Neutral · 위험: Red (이 단계에서만) · 대응 완료 후: Blue 복귀
+ */
+.arch-sec { background: var(--white); }
+.arch-step,
+.story.is-ready .arch-step .step-inner,
+.arch-step .step-inner {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  opacity: 1;
+}
+.arch {
+  --blue: #067cbe;
+  --red: #e53935;
+  --pk: 0;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(96px, 14vh, 160px) var(--gutter) clamp(80px, 12vh, 140px);
+}
+.arch-head {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  text-align: center;
+  margin-bottom: clamp(32px, 5vh, 56px);
+}
+.arch-kicker {
+  margin: 0 0 16px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: var(--blue);
+}
+.arch-title {
+  display: grid;
+  margin: 0;
+  font-size: clamp(2.125rem, 1.2rem + 2.8vw, 4rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+  color: #191f28;
+}
+.arch-title em { font-style: normal; color: #0b4f9c; }
+.arch-sub {
+  max-width: 36em;
+  margin: 0;
+  font-size: clamp(1rem, 0.9rem + 0.45vw, 1.375rem);
+  line-height: 1.6;
+  color: #4e5968;
+}
+
+/* ---------- 구성도 ---------- */
+.arch-scroll { position: relative; }
+.arch-stage {
+  position: relative;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #f6f8fa;
+}
+.arch-img,
+.arch-fx,
+.arch-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.arch-img { object-fit: cover; }
+.arch-fx { pointer-events: none; }
+.arch-svg { overflow: visible; pointer-events: none; }
+.arch-patch {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms var(--ease);
+}
+
+/* 연결 가이드 (센서 → 컨트롤러) */
+.ap-guide {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 1.6;
+  stroke-dasharray: 3 6;
+  opacity: 0.45;
+}
+.ap-alert use {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.arch[data-phase='danger'] .ap-alert use:first-child,
+.arch[data-phase='response'] .ap-alert use { opacity: 1; }
+/* 센서 → 컨트롤러 구간은 이미지에 선이 없어 점선 가이드와 같은 모양으로 */
+.ap-alert use:first-child { stroke-width: 2; stroke-dasharray: 3 6; }
+.arch[data-phase='danger'] .ap-guide,
+.arch[data-phase='response'] .ap-guide { opacity: 0.15; }
+
+/* 데이터 신호: 연결선 위를 지나가는 짧은 빛 */
+.ap-pulse use {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 0 100000;
+  opacity: 0;
+}
+.ap-pulse-halo { stroke: var(--blue); stroke-width: 10; stroke-opacity: 0.18; }
+.ap-pulse-core { stroke: #3aa0e8; stroke-width: 4; filter: drop-shadow(0 0 4px rgba(6, 124, 190, 0.8)); }
+.ap-pulse.is-red .ap-pulse-halo { stroke: var(--red); }
+.ap-pulse.is-red .ap-pulse-core { stroke: #ff5a4f; filter: drop-shadow(0 0 5px rgba(229, 57, 53, 0.85)); }
+.ap-nodes circle {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ap-nodes circle.is-red { stroke: var(--red); }
+
+/* Radar 스캔 웨이브 */
+.ap-radar path {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0;
+  animation: ap-scan 2.4s ease-in-out infinite;
+}
+.ap-radar path:nth-child(2) { animation-delay: 0.3s; }
+.ap-radar path:nth-child(3) { animation-delay: 0.6s; }
+@keyframes ap-scan {
+  0%, 100% { opacity: 0; }
+  35% { opacity: 0.7; }
+  70% { opacity: 0; }
+}
+.ap-led { fill: var(--blue); animation: ap-blink 1.6s ease-in-out infinite; }
+@keyframes ap-blink { 50% { opacity: 0.25; } }
+
+/* IR 측정선: 평상시 Blue, 상승 Orange, 위험 Red */
+.ap-ir { --ir: var(--blue); }
+.arch[data-phase='rising'] .ap-ir { --ir: #f08c00; }
+.arch[data-phase='danger'] .ap-ir,
+.arch[data-phase='response'] .ap-ir { --ir: var(--red); }
+.ap-ir line {
+  stroke: var(--ir);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 6;
+  animation: ap-flow 0.9s linear infinite;
+  opacity: 0.85;
+  transition: stroke 400ms ease;
+}
+@keyframes ap-flow { to { stroke-dashoffset: -11; } }
+.ap-ir-dot, .ap-ir-emit { fill: var(--ir); transition: fill 400ms ease; }
+.ap-ir-ring {
+  fill: none;
+  stroke: var(--ir);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ap-ring 1.6s ease-out infinite;
+  transition: stroke 400ms ease;
+}
+@keyframes ap-ring {
+  0% { transform: scale(0.4); opacity: 0.9; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.arch[data-phase='danger'] .arch-patch--ir,
+.arch[data-phase='response'] .arch-patch--ir { opacity: 1; }
+
+/* 가스 밸브: 열림(초록) → 차단(빨강) */
+.ap-valve-led { fill: #12b886; transition: fill 300ms ease; }
+.ap-valve-halo { fill: #12b886; opacity: 0.25; transition: fill 300ms ease; }
+.arch[data-phase='response'] .ap-valve-led,
+.arch[data-phase='response'] .ap-valve-halo { fill: var(--red); }
+.arch[data-phase='response'] .ap-valve-halo { animation: ap-blink 0.6s ease-in-out infinite; opacity: 0.5; }
+
+/* 경광등 */
+.arch-beacon-glow {
+  position: absolute;
+  width: 11%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 60, 50, 0.45), rgba(255, 60, 50, 0) 65%);
+  opacity: 0;
+  pointer-events: none;
+}
+.arch[data-phase='danger'] .arch-patch--beacon,
+.arch[data-phase='response'] .arch-patch--beacon { opacity: 1; }
+.arch[data-phase='danger'] .arch-beacon-glow,
+.arch[data-phase='response'] .arch-beacon-glow { animation: ap-beacon 0.75s ease-in-out infinite; }
+@keyframes ap-beacon { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+
+/* 표면 온도 (예시) */
+.arch-temp {
+  position: absolute;
+  display: grid;
+  gap: 1px;
+  padding: 8px 12px 9px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 20px rgba(25, 31, 40, 0.12);
+  font-size: clamp(0.625rem, 0.5rem + 0.25vw, 0.75rem);
+  color: #6b7684;
+  white-space: nowrap;
+}
+.arch-temp b { font-size: clamp(1rem, 0.8rem + 0.5vw, 1.375rem); color: #191f28; font-weight: 800; line-height: 1.2; transition: color 300ms ease; }
+.arch-temp b i { font-style: normal; }
+.arch-temp small { font-size: inherit; font-weight: 700; color: var(--blue); transition: color 300ms ease; }
+.arch[data-phase='rising'] .arch-temp small { color: #f08c00; }
+.arch[data-phase='danger'] .arch-temp b,
+.arch[data-phase='danger'] .arch-temp small,
+.arch[data-phase='response'] .arch-temp b,
+.arch[data-phase='response'] .arch-temp small { color: var(--red); }
+
+/* 관제 상태 (예시) */
+.arch-status {
+  position: absolute;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 6px 20px rgba(25, 31, 40, 0.14);
+  font-size: clamp(0.625rem, 0.5rem + 0.25vw, 0.8125rem);
+  font-weight: 700;
+  color: #191f28;
+  white-space: nowrap;
+}
+.arch-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 0 0 rgba(6, 124, 190, 0.5);
+  animation: ap-pulse 2s ease-out infinite;
+}
+@keyframes ap-pulse { 0% { box-shadow: 0 0 0 0 rgba(6, 124, 190, 0.45); } 100% { box-shadow: 0 0 0 9px rgba(6, 124, 190, 0); } }
+.arch-st { display: none; }
+.arch[data-phase='normal'] .arch-st--normal,
+.arch[data-phase='rising'] .arch-st--normal,
+.arch[data-phase='danger'] .arch-st--danger,
+.arch[data-phase='response'] .arch-st--response,
+.arch[data-phase='recovery'] .arch-st--recovery { display: inline; }
+.arch[data-phase='danger'] .arch-status,
+.arch[data-phase='response'] .arch-status { color: var(--red); }
+.arch[data-phase='danger'] .arch-status-dot,
+.arch[data-phase='response'] .arch-status-dot { background: var(--red); animation: none; }
+.arch-example {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.6875rem;
+  color: #6b7684;
+}
+
+/* ---------- 작동 단계 ---------- */
+.arch-phases {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.arch-phase {
+  display: grid;
+  gap: 4px;
+  opacity: 0.5;
+  transition: opacity 300ms ease;
+}
+.arch-phase-bar {
+  display: block;
+  height: 3px;
+  border-radius: 3px;
+  background: #e5e8eb;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.arch-phase-bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--blue);
+}
+.arch-phase.is-done .arch-phase-bar i { width: 100%; }
+.arch-phase.is-active .arch-phase-bar i { width: calc(var(--pk) * 100%); }
+.arch-phase b { font-size: 0.9375rem; color: #191f28; }
+.arch-phase b span { color: var(--blue); margin-right: 4px; font-size: 0.8125rem; }
+.arch-phase small { font-size: 0.8125rem; line-height: 1.5; color: #6b7684; }
+.arch-phase.is-active,
+.arch-phase.is-done { opacity: 1; }
+.arch[data-phase='danger'] .arch-phase[data-phase-id='danger'] .arch-phase-bar i,
+.arch[data-phase='response'] .arch-phase[data-phase-id='response'] .arch-phase-bar i,
+.arch[data-phase='response'] .arch-phase[data-phase-id='danger'] .arch-phase-bar i { background: var(--red); }
+.arch[data-phase='danger'] .arch-phase[data-phase-id='danger'] b span,
+.arch[data-phase='response'] .arch-phase[data-phase-id='response'] b span { color: var(--red); }
+
+/* 화면 밖이거나 움직임 줄이기: 애니메이션 정지 */
+.arch:not(.is-live) .ap-radar path,
+.arch:not(.is-live) .ap-ir line,
+.arch:not(.is-live) .ap-ir-ring,
+.arch:not(.is-live) .ap-led { animation-play-state: paused; }
+.arch.is-static .ap-pulses,
+.arch.is-static .arch-phase-bar { display: none; }
+.arch.is-static .ap-radar path,
+.arch.is-static .ap-ir line,
+.arch.is-static .ap-ir-ring,
+.arch.is-static .ap-led,
+.arch.is-static .arch-status-dot { animation: none; }
+.arch.is-static .ap-radar path { opacity: 0.5; }
+.arch.is-static .arch-phase { opacity: 1; }
+
+.arch-swipe { display: none; }
+
+/* ---------- 모바일 ---------- */
+@media (max-width: 1023px) {
+  .arch { padding: 72px 0 72px; }
+  .arch-head { grid-template-columns: 1fr; padding: 0 20px; }
+  .arch-kicker { letter-spacing: 0.22em; margin-bottom: 10px; }
+  .arch-title { font-size: 1.875rem; }
+  .arch-sub { border-left: 0; padding-left: 0; font-size: 1rem; }
+  .arch-scroll {
+    overflow-x: auto;
+    padding: 0 20px 8px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+  .arch-stage { width: 980px; max-width: none; border-radius: 18px; }
+  .arch-swipe { display: block; margin: 8px 20px 0; font-size: 0.8125rem; color: #8b95a1; }
+  .arch-phases {
+    grid-template-columns: repeat(5, minmax(150px, 1fr));
+    overflow-x: auto;
+    padding: 0 20px 4px;
+  }
+}
+
+/* 기기 범례 (구성도 아래) */
+.arch-phases { display: none !important; }
+.arch-legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 1180px;
+  margin: 28px auto 0;
+  padding: 0 var(--gutter);
+}
+.arch-group { display: grid; gap: 12px; padding: 22px 24px; border-radius: 20px; background: #f6f8fa; }
+.arch-group b { display: flex; align-items: center; gap: 8px; font-size: 1.0625rem; color: #191f28; }
+.arch-group b::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--grib-blue); }
+.arch-group--fire b::before { background: #e8590c; }
+.arch-group--net b::before { background: #191f28; }
+.arch-group ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.arch-group li { font-size: 0.9375rem; color: #4e5968; padding: 6px 12px; border-radius: 999px; background: #fff; }
+.arch-head .sec-kicker { letter-spacing: 0; }
+@media (max-width: 1023px) {
+  .arch-legend { grid-template-columns: 1fr; padding: 0 20px; gap: 10px; }
+}

@@ -1,0 +1,150 @@
+/*
+ * 편집 타이포그래피 — 페이지 전체의 글자 크기·행간·간격을 한 체계로 맞춥니다 (마지막에 불러옴).
+ *  크기 단계: 디스플레이 > 섹션 제목 > 장면 제목 > 카드 제목 > 리드 > 본문 > 보조
+ *  행간: 제목 1.3 안팎 · 카드 제목 1.5 · 본문 1.75 (한글은 영문보다 넉넉하게)
+ *  간격: 소제목→제목 16 · 제목→리드 24 · 리드→보조 16 · 블록 사이 40/64
+ */
+:root {
+  --lh-display: 1.24;
+  --lh-title: 1.34;
+  --lh-card: 1.5;
+  --lh-text: 1.75;
+  --tx-strong: #191f28;
+  --tx-body: #4e5968;
+  --tx-sub: #6b7684;
+  --tx-faint: #8b95a1;
+}
+
+/* ---------- 디스플레이: 첫 화면 · 마지막 화면 ---------- */
+.t-display {
+  line-height: var(--lh-display);
+  letter-spacing: -0.035em;
+}
+#hero .t-display { font-size: clamp(2.5rem, 1.7rem + 2.9vw, 4.25rem); }
+.t-display--cta { font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem); }
+#hero .kicker,
+#cta .kicker { margin: 0; }
+#hero .step-inner,
+#cta .step-inner { gap: 0; }
+#hero .t-display,
+#cta .t-display { margin: 16px 0 0; }
+#cta .t-display { margin-top: 0; }
+#hero .t-lead,
+#cta .t-lead { margin: 24px 0 0; line-height: var(--lh-text); color: var(--tx-body); }
+#hero .hero-cta,
+#cta .cta-actions { margin-top: 36px; }
+
+/* ---------- 섹션 제목 ---------- */
+.sec-kicker,
+.cc-customer { margin: 0 0 16px !important; font-size: 0.9375rem; line-height: 1.5; }
+.sec-title,
+.cc-title,
+.contact .t-h2 {
+  font-size: clamp(2rem, 1.4rem + 2.1vw, 3.25rem) !important;
+  font-weight: 700;
+  line-height: var(--lh-title) !important;
+  letter-spacing: -0.032em !important;
+  color: var(--tx-strong);
+}
+.sec-sub,
+.contact .t-lead {
+  margin: 24px 0 0;
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  line-height: var(--lh-text);
+  letter-spacing: -0.01em;
+  color: var(--tx-body);
+}
+
+/* ---------- 작동 과정 장면 (영상 위 문구) ---------- */
+.layout--film .step-inner { gap: 0 !important; }
+.op-kicker { margin: 0 0 16px !important; font-size: 0.9375rem !important; letter-spacing: 0 !important; }
+.layout--film .t-h3 {
+  margin: 0;
+  line-height: var(--lh-title);
+  letter-spacing: -0.032em;
+  color: var(--tx-strong);
+}
+@media (min-width: 1024px) {
+  .layout--film .t-h3 { font-size: clamp(1.875rem, 1.3rem + 1.6vw, 2.75rem); }
+}
+.layout--film .t-lead {
+  margin: 20px 0 0;
+  font-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  line-height: var(--lh-text);
+  letter-spacing: -0.01em;
+  color: var(--tx-body);
+}
+.layout--film .t-note {
+  position: relative;
+  margin: 20px 0 0;
+  padding: 0 0 0 0.9em;
+  border: 0;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--tx-sub);
+}
+/* 별첨 주석: 문장 앞 * (둘째 줄은 들여 맞춤) */
+.layout--film .t-note::before { content: '*'; position: absolute; left: 0; top: 0; }
+
+/* ---------- 카드 제목 · 본문 · 보조 ---------- */
+.pb-h,
+.cc-title-sm,
+.sc2-effects b,
+.sc2-trust b,
+.tr-proof-txt b {
+  line-height: var(--lh-card) !important;
+  letter-spacing: -0.022em !important;
+  color: var(--tx-strong);
+}
+.pb-h { font-size: clamp(1.25rem, 1.1rem + 0.45vw, 1.5rem) !important; margin-top: 4px !important; }
+.sc2-effects b { font-size: clamp(1.1875rem, 1.05rem + 0.4vw, 1.375rem) !important; }
+.sc2-trust b { font-size: 1.125rem !important; }
+.pb-body,
+.sc2-effects p,
+.sc2-trust p,
+.sc2-proc p,
+.arch-group li,
+.contact-direct dd {
+  line-height: var(--lh-text) !important;
+  color: var(--tx-body);
+}
+.pb-body { margin-top: 4px !important; font-size: 1rem !important; }
+.sc2-proc p { font-size: 0.9375rem !important; }
+.pb-src,
+.cc-foot,
+.tr-proof-txt small { line-height: 1.65; }
+.pb-closing { line-height: var(--lh-title); letter-spacing: -0.03em; }
+.pb-value b { line-height: 1 !important; }
+
+/* 카드 안쪽 리듬 */
+.pb-item { gap: 0 !important; }
+.pb-label { margin-bottom: 6px !important; }
+.pb-value { margin: 0 0 20px !important; }
+.pb-src { margin-top: 20px !important; }
+.sc2-effects li,
+.sc2-trust li { gap: 12px !important; }
+.sc2-proc li { gap: 12px !important; }
+.sc2-proc h3 { line-height: 1.4; }
+
+/* 블록 사이 간격 (섹션 안) */
+.pb-list { margin-top: 48px !important; }
+.pb-closing { margin-top: 40px !important; }
+.sc2-wrap { gap: 64px !important; }
+.sc2-block { gap: 24px !important; }
+
+@media (max-width: 1023px) {
+  .sec-title,
+  .cc-title,
+  .contact .t-h2 { font-size: 1.75rem !important; line-height: 1.36 !important; }
+  .layout--film .t-h3 { font-size: 1.5rem; line-height: 1.38; }
+  .layout--film .t-lead { margin-top: 12px; font-size: 1rem; line-height: 1.7; }
+  .layout--film .t-note { margin-top: 14px; }
+  .op-kicker { margin-bottom: 10px !important; }
+  .sec-sub { margin-top: 16px; font-size: 1rem; }
+  #hero .t-lead,
+  #cta .t-lead { margin-top: 16px; }
+  #hero .hero-cta,
+  #cta .cta-actions { margin-top: 24px; }
+  .pb-list { margin-top: 32px !important; }
+  .sc2-wrap { gap: 48px !important; }
+}

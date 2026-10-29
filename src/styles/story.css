@@ -1,0 +1,727 @@
+/*
+ * Story — 스크롤되는 텍스트 Step 과 타이포그래피.
+ * Desktop: 왼쪽 텍스트 컬럼(무대는 오른쪽) / Mobile: 상단 무대 아래 텍스트 시트
+ */
+
+.story {
+  position: relative;
+}
+.story-track {
+  position: relative;
+}
+.step {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Step ---------- */
+.step {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: calc(var(--header-h) + 4vh) var(--gutter) 6vh;
+}
+.step--tall {
+  min-height: 130vh;
+}
+@media (min-width: 1024px) {
+  #hero .step-inner,
+  #cta .step-inner {
+    width: min(50vw, 700px);
+  }
+}
+.step--long {
+  min-height: 0;
+  padding-top: 24vh;
+  padding-bottom: 24vh;
+}
+.step-inner {
+  width: min(33vw, 480px);
+  display: grid;
+  gap: 18px;
+}
+/* 텍스트는 활성 Step 에서 또렷하게 — 정보 위계 표시, JS 없으면 항상 또렷 */
+.story.is-ready .step-inner {
+  opacity: 0.28;
+  transition: opacity 500ms var(--ease);
+}
+.story.is-ready .step.is-active .step-inner {
+  opacity: 1;
+}
+
+/* ---------- Type ---------- */
+.kicker {
+  font-size: var(--fs-small);
+  font-weight: 650;
+  color: var(--grib-blue-deep);
+}
+.t-display {
+  font-size: var(--fs-display);
+  font-weight: 750;
+  line-height: 1.16;
+  letter-spacing: var(--track-tight);
+}
+.t-display--cta {
+  font-size: clamp(2.25rem, 1.5rem + 2.8vw, 4rem);
+}
+.t-h2 {
+  font-size: var(--fs-h2);
+  font-weight: 750;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--track-tight);
+}
+.t-h3 {
+  font-size: var(--fs-h3);
+  font-weight: 720;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.03em;
+}
+.t-h4 {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.t-lead {
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: #3b4652;
+  max-width: 34em;
+}
+.t-body {
+  color: #3b4652;
+}
+.t-note {
+  padding-left: 14px;
+  border-left: 3px solid var(--grib-blue-soft);
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+.t-caption {
+  font-size: 0.8125rem;
+  color: var(--cool-gray);
+}
+.t-statement {
+  font-size: var(--fs-h3);
+  font-weight: 720;
+  line-height: 1.32;
+  letter-spacing: -0.03em;
+  color: var(--grib-blue-deep);
+}
+.step-count,
+.step-num {
+  font-size: var(--fs-small);
+  font-weight: 650;
+  color: var(--grib-blue);
+}
+.scroll-hint {
+  margin-top: 12px;
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+
+/* ---------- Problem → Solution ---------- */
+.ps {
+  display: grid;
+  gap: 14px;
+}
+.ps-problem {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--cool-gray);
+}
+.ps-tag {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.ps-arrow {
+  display: block;
+  width: 2px;
+  height: 28px;
+  margin-left: 18px;
+  background: var(--grib-blue);
+  position: relative;
+}
+.ps-arrow::after {
+  content: '';
+  position: absolute;
+  left: -5px;
+  bottom: -2px;
+  border: 6px solid transparent;
+  border-top-color: var(--grib-blue);
+  border-bottom: 0;
+}
+
+/* ---------- Case ---------- */
+.case {
+  display: grid;
+  gap: 18px;
+}
+.case-customer {
+  font-size: 1.5rem;
+  font-weight: 750;
+  color: var(--grib-blue-deep);
+}
+.case-photo {
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--mist);
+}
+.case-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.case-photo--empty {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border: 1.5px dashed var(--cool-gray-light);
+  text-align: center;
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+.facts {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+.facts div {
+  display: grid;
+  grid-template-columns: 7.5em 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.facts dt {
+  color: var(--cool-gray);
+}
+.facts dd {
+  font-weight: 600;
+  justify-self: start;
+}
+.case-quote {
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  background: var(--mist);
+}
+.case-quote p {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  display: inline;
+}
+.case-quote footer {
+  margin-top: 8px;
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+.case-total {
+  display: grid;
+  gap: 2px;
+}
+.case-total b {
+  font-size: 1.25rem;
+}
+.case-total span {
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+
+/* ---------- Patents ---------- */
+.patents {
+  display: grid;
+  gap: 8px;
+}
+.patents li {
+  display: grid;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+.patents span {
+  font-size: var(--fs-small);
+}
+
+/* ---------- Process ---------- */
+.process {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+.process li {
+  display: grid;
+  grid-template-columns: 2.4em 7.5em 1fr;
+  gap: 8px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.process-n {
+  font-size: var(--fs-small);
+  font-weight: 650;
+  color: var(--grib-blue);
+}
+.process li > span:last-child {
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+
+/* ---------- Trust ---------- */
+.proofs {
+  display: grid;
+  gap: 26px;
+}
+.proof {
+  display: grid;
+  gap: 4px;
+}
+.proof-kind {
+  font-size: var(--fs-small);
+  font-weight: 650;
+  color: var(--grib-blue);
+}
+.proof-title {
+  font-size: 1.5rem;
+  font-weight: 720;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  justify-self: start;
+}
+.proof-body {
+  color: #3b4652;
+}
+.customers {
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.customers-title {
+  font-size: var(--fs-small);
+  font-weight: 650;
+  color: var(--cool-gray);
+  margin-bottom: 10px;
+}
+.customers dl {
+  display: grid;
+  gap: 10px;
+}
+.customers dl > div {
+  display: grid;
+  grid-template-columns: 7.5em 1fr;
+  gap: 12px;
+}
+.customers dt {
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+.customers ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  color: #4b5663;
+  font-weight: 600;
+}
+
+/* ---------- CTA ---------- */
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ---------- Contact ---------- */
+.contact {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 6vw, 96px);
+  padding: 120px var(--gutter);
+  background: var(--white);
+  border-top: 1px solid var(--line);
+}
+.contact-intro {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+.contact-direct {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.contact-direct div {
+  display: flex;
+  gap: 16px;
+}
+.contact-direct dt {
+  width: 4em;
+  color: var(--cool-gray);
+}
+.contact-direct a {
+  font-weight: 650;
+  text-decoration: none;
+}
+.contact-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 16px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
+.field--full {
+  grid-column: 1 / -1;
+}
+.field label {
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+.field label span {
+  font-weight: 400;
+  color: var(--cool-gray);
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--white);
+}
+.field textarea {
+  resize: vertical;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--grib-blue);
+  box-shadow: 0 0 0 3px var(--grib-blue-soft);
+}
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: var(--fs-small);
+  color: #3b4652;
+}
+.consent input {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--grib-blue);
+}
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.submit {
+  min-height: 54px;
+  padding: 0 32px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--grib-blue);
+  color: var(--white);
+  font-weight: 650;
+  cursor: pointer;
+}
+.submit:hover {
+  background: var(--grib-blue-deep);
+}
+.submit[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+.form-status[data-tone='ok'] {
+  color: var(--grib-blue-deep);
+  font-weight: 600;
+}
+.form-status[data-tone='error'] {
+  color: var(--alarm);
+  font-weight: 600;
+}
+
+/* ======================================================
+ * Tablet / Mobile
+ * ====================================================== */
+@media (max-width: 1023px) {
+  /* 텍스트 카드는 화면 아래쪽에서 올라와 무대 패널 밑으로 들어갑니다 */
+  .step {
+    min-height: 82svh;
+    align-items: flex-start;
+    padding: 0 12px;
+  }
+  .step--long {
+    min-height: 0;
+    padding: 0 12px 30svh;
+  }
+  #hero,
+  #cta {
+    z-index: 3;
+    min-height: 130svh;
+    align-items: flex-end;
+    padding-bottom: 4svh;
+  }
+  #hero {
+    min-height: 100svh;
+  }
+  #cta {
+    margin-top: 40svh;
+  }
+  /* 전체 화면 장면의 문구는 해당 장면에서만 보이게 */
+  .story.is-ready #hero:not(.is-active) .step-inner,
+  .story.is-ready #cta:not(.is-active) .step-inner {
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  .step-inner {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 22px 20px 24px;
+    border-radius: 18px;
+    background: var(--white);
+    box-shadow: 0 -2px 0 var(--line), 0 18px 40px rgba(30, 39, 49, 0.08);
+    gap: 12px;
+  }
+  #hero .step-inner,
+  #cta .step-inner {
+    box-shadow: none;
+    background: transparent;
+    padding-bottom: 6svh;
+  }
+  .story.is-ready .step-inner {
+    opacity: 1;
+  }
+  .t-h3 {
+    font-size: 1.625rem;
+  }
+  .contact {
+    grid-template-columns: 1fr;
+    padding: 72px 20px;
+  }
+}
+
+@media (max-width: 599px) {
+  .contact-form {
+    grid-template-columns: 1fr;
+  }
+  .process li {
+    grid-template-columns: 2.2em 1fr;
+  }
+  .process li > span:last-child {
+    grid-column: 2;
+  }
+  .facts div,
+  .customers dl > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .cta-actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* ======================================================
+ * Cycle Step — 한 화면에 여러 내용을 함께 두고, 스크롤 구간마다 해당 부분만 강조
+ * ====================================================== */
+.step--cycle {
+  min-height: calc(var(--parts, 3) * 85vh);
+}
+[data-part] {
+  transition: opacity 400ms var(--ease), border-color 400ms var(--ease);
+}
+
+/* ---------- 문제 → 대응 보드 ---------- */
+.t-h2--sm {
+  font-size: clamp(1.875rem, 1.3rem + 1.8vw, 2.875rem);
+}
+.ps-board {
+  display: grid;
+  gap: 14px;
+  margin-top: 6px;
+}
+.ps-group {
+  padding: 16px 18px 6px;
+  border-radius: var(--radius-md);
+  background: var(--mist);
+}
+.ps-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--grib-blue-deep);
+}
+.ps-group-title::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--grib-blue);
+}
+.ps-list li,
+.ps-foot {
+  display: grid;
+  grid-template-columns: 8.5em 1fr;
+  gap: 12px;
+  align-items: baseline;
+  padding: 10px 0;
+}
+.ps-list li + li {
+  border-top: 1px solid var(--line);
+}
+.ps-p {
+  font-size: 0.875rem;
+  color: var(--cool-gray);
+}
+.ps-s {
+  position: relative;
+  padding-left: 22px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+.ps-s::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 12px;
+  height: 2px;
+  background: var(--grib-blue);
+}
+.ps-s::after {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: calc(0.62em - 3px);
+  border: 4px solid transparent;
+  border-left: 5px solid var(--grib-blue);
+  border-right: 0;
+}
+.ps-foot {
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.step--cycle[data-sub='1'] .ps-group:not([data-part='1']),
+.step--cycle[data-sub='2'] .ps-group:not([data-part='2']),
+.step--cycle[data-sub='1'] .ps-foot,
+.step--cycle[data-sub='2'] .ps-foot {
+  opacity: 0.38;
+}
+
+/* ---------- WHY GRIB 요약 ---------- */
+.why-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px 48px;
+}
+.why .t-h2 {
+  font-size: clamp(1.75rem, 1.1rem + 1.7vw, 2.625rem);
+}
+.why-key {
+  font-size: clamp(1.0625rem, 0.9rem + 0.5vw, 1.375rem);
+  font-weight: 700;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--grib-blue-deep);
+}
+.why-points {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.why-points li {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding-top: 14px;
+  border-top: 2px solid var(--line);
+}
+.why-num {
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--grib-blue);
+}
+.why-points h3 {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.why-points p {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #4b5663;
+}
+.why-points .why-patent {
+  justify-self: start;
+  margin-top: 4px;
+  font-size: 0.75rem;
+}
+.why[data-sub] .why-points li {
+  opacity: 0.42;
+}
+.why[data-sub='0'] .why-points li[data-part='0'],
+.why[data-sub='1'] .why-points li[data-part='1'],
+.why[data-sub='2'] .why-points li[data-part='2'],
+.why[data-sub='3'] .why-points li[data-part='3'] {
+  opacity: 1;
+  border-top-color: var(--grib-blue);
+}
+
+@media (min-width: 1024px) {
+  /* 텍스트를 화면에 고정한 채 구간만 바뀜 */
+  .layout--split-right.step--cycle {
+    align-items: flex-start;
+  }
+  .layout--split-right.step--cycle .step-inner {
+    position: sticky;
+    top: calc(var(--header-h) + 5vh);
+    gap: 14px;
+  }
+  /* WHY: stack-bottom 2단 규칙 대신 제목줄 + 4열 */
+  .layout--stack-bottom.why .step-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 22px;
+  }
+  .layout--stack-bottom.why .step-inner > * {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* 모바일: 카드가 지나가는 동안 무대가 구간을 차례로 시연 (빈 스크롤 없음) */
+  .step--cycle {
+    min-height: 0;
+    padding-bottom: 24svh;
+  }
+  .why-points {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .ps-list li,
+  .ps-foot {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

@@ -1,0 +1,130 @@
+---
+/**
+ * GNB 메뉴 페이지 — src/data/nav.ts 의 모든 메뉴 주소를 만듭니다.
+ *  - 상위 메뉴(/solutions/ 등): 하위 항목 카드 목록
+ *  - 하위 메뉴(/solutions/ai-safety/ 등): 상세 내용이 준비될 때까지 안내 화면
+ * 실제 상세페이지를 만들면 같은 주소의 .astro 파일을 추가하세요. 그 파일이 이 템플릿보다 우선합니다.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import { gnb, type NavMenu, type NavGroup, type NavLink } from '../data/nav';
+import { site } from '../data/site';
+
+export function getStaticPaths() {
+  const strip = (h: string) => h.replace(/^\/|\/$/g, '');
+  const out: { params: { slug: string }; props: { menu: NavMenu; group?: NavGroup; link?: NavLink } }[] = [];
+  for (const menu of gnb) {
+    out.push({ params: { slug: strip(menu.href) }, props: { menu } });
+    for (const group of menu.groups)
+      for (const link of group.links)
+        if (link.href.startsWith('/') && link.href !== '/' && !link.href.includes('#'))
+          out.push({ params: { slug: strip(link.href) }, props: { menu, group, link } });
+  }
+  return out;
+}
+
+const { menu, group, link } = Astro.props;
+const isDetail = Boolean(link);
+const title = isDetail ? `${link!.label} | ${site.brand} ${menu.label}` : `${menu.label} | ${site.brand}`;
+const description = isDetail ? `${site.company} ${menu.label} — ${link!.label}` : menu.intro;
+const siblings = group?.links.filter((l) => l !== link) ?? [];
+---
+
+<BaseLayout title={title} description={description} service={false}>
+  <Header />
+  <main id="main" class="np">
+    <nav class="np-crumb" aria-label="현재 위치">
+      <a href="/">홈</a><span aria-hidden="true">›</span>
+      {isDetail ? <a href={menu.href}>{menu.label}</a> : <span aria-current="page">{menu.label}</span>}
+      {isDetail && group?.title && <><span aria-hidden="true">›</span><span>{group.title}</span></>}
+      {isDetail && <><span aria-hidden="true">›</span><span aria-current="page">{link!.label}</span></>}
+    </nav>
+
+    {
+      isDetail ? (
+        <section class="np-hero">
+          <p class="np-kicker">{menu.label}{group?.title ? ` · ${group.title}` : ''}</p>
+          <h1 class="np-title">{link!.label}</h1>
+          <p class="np-lead">상세 페이지를 준비하고 있습니다. 도입 상담이나 자료가 필요하시면 바로 문의해 주세요.</p>
+          <div class="np-actions">
+            <a class="np-btn" href="/#contact">도입 상담 문의</a>
+            <a class="np-btn np-btn--ghost" href={`tel:${site.tel.replace(/[^0-9]/g, '')}`}>{site.tel}</a>
+          </div>
+          {siblings.length > 0 && (
+            <div class="np-more">
+              <p>{group?.title ?? menu.label}의 다른 항목</p>
+              <ul>{siblings.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+            </div>
+          )}
+        </section>
+      ) : (
+        <section class="np-hero">
+          <h1 class="np-title">{menu.label}</h1>
+          <p class="np-lead">{menu.intro}</p>
+          <div class="np-groups">
+            {menu.groups.map((g) => (
+              <div class="np-group">
+                {g.title && <h2>{g.title}</h2>}
+                <ul>
+                  {g.links.map((l) => (
+                    <li>
+                      <a href={l.href}>
+                        <span>{l.label}</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .np {
+    min-height: 72vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: calc(var(--header-h) + 48px) var(--gutter) 120px;
+  }
+  .np-crumb { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.875rem; color: #8b95a1; }
+  .np-crumb a { color: #6b7684; text-decoration: none; }
+  .np-crumb a:hover { color: var(--grib-blue); }
+  .np-crumb [aria-current] { color: #191f28; font-weight: 600; }
+  .np-hero { margin-top: 48px; }
+  .np-kicker { margin: 0 0 12px; font-size: 0.875rem; font-weight: 700; color: var(--grib-blue); }
+  .np-title { margin: 0; font-size: clamp(2rem, 1.3rem + 2.4vw, 3.5rem); font-weight: 800; letter-spacing: -0.04em; color: #191f28; }
+  .np-lead { max-width: 40em; margin: 18px 0 0; font-size: 1.125rem; line-height: 1.65; color: #4e5968; }
+  .np-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+  .np-btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0 24px; border-radius: 12px; background: var(--grib-blue); color: #fff; font-weight: 700; text-decoration: none; }
+  .np-btn:hover { background: var(--grib-blue-deep); }
+  .np-btn--ghost { background: #f2f4f6; color: #191f28; }
+  .np-btn--ghost:hover { background: #e5e8eb; }
+  .np-more { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .np-more p { margin: 0 0 14px; font-size: 0.9375rem; color: #8b95a1; }
+  .np-more ul { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .np-more a { display: inline-block; padding: 10px 16px; border-radius: 999px; background: #f7f9fb; color: #333d4b; font-size: 0.9375rem; text-decoration: none; }
+  .np-more a:hover { background: var(--grib-blue-tint); color: var(--grib-blue); }
+  .np-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px 24px; margin-top: 56px; }
+  .np-group h2 { margin: 0 0 12px; font-size: 1rem; font-weight: 700; color: #8b95a1; }
+  .np-group ul { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .np-group a {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 18px 20px; border-radius: 16px; background: #f7f9fb;
+    font-size: 1.0625rem; font-weight: 700; color: #191f28; text-decoration: none;
+    transition: background 200ms ease, color 200ms ease, transform 200ms var(--ease);
+  }
+  .np-group a:hover { background: var(--grib-blue-tint); color: var(--grib-blue); transform: translateX(2px); }
+  .np-group a.is-current { color: var(--grib-blue); }
+  .np-group svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; flex: none; }
+  @media (max-width: 1023px) {
+    .np { padding: calc(var(--header-h) + 28px) 20px 80px; }
+    .np-hero { margin-top: 32px; }
+  }
+</style>

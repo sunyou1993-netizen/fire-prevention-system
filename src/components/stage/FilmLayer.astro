@@ -1,0 +1,39 @@
+---
+/**
+ * 실사 원테이크 영상 레이어 — 스크롤에 맞춰 재생(스크럽)됩니다 (src/scripts/film.ts).
+ * 영상이 준비되기 전, 또는 불러오지 못한 환경에서는 첫 프레임 포스터가 보입니다.
+ */
+import { film } from '../../data/stage';
+---
+
+<div class="film">
+  <picture>
+    <source srcset={film.poster} type="image/webp" />
+    <img class="film-poster" src={film.posterFallback} alt="" width="1600" height="900" decoding="async" />
+  </picture>
+  <video
+    class="film-video"
+    muted
+    playsinline
+    preload="none"
+    disableremoteplayback
+    data-src={film.src}
+    data-src-small={film.srcSmall}
+    data-webm={film.webm}
+    data-webm-small={film.webmSmall}
+    data-duration={film.duration}
+  ></video>
+  <!-- 첫 화면 대기 중: 같은 장면에서 국이 끓고 증기·센서 LED가 움직이는 5초 반복 영상 -->
+  <video
+    class="film-loop"
+    muted
+    loop
+    playsinline
+    preload="none"
+    disableremoteplayback
+    data-src={film.loop}
+    data-src-small={film.loopSmall}
+    data-webm={film.loopWebm}
+    data-webm-small={film.loopWebmSmall}
+  ></video>
+</div>

@@ -1,0 +1,413 @@
+/*
+ * 실제 운영 사례 (아워홈) — 카드 캐러셀
+ * 데스크톱: 화면 고정 + 스크롤에 따라 카드가 가로로 이동 (scripts/carousel.ts)
+ * 모바일: 손가락으로 넘기는 가로 스크롤
+ */
+
+/* 관제 화면 "예시 화면" 표시 (무대 대시보드) */
+.dash-tag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--mist);
+  border: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cool-gray);
+}
+
+/* 이 장면에서는 무대를 숨김 */
+.story[data-view='blank'] .frame {
+  opacity: 0;
+}
+
+/* ---------- 섹션 틀 ---------- */
+.cc-step {
+  display: block;
+  padding: 0;
+  min-height: calc(100vh + var(--cc-scroll, 1600px));
+}
+.cc-step .step-inner {
+  width: 100%;
+  max-width: none;
+  display: block;
+  /* sticky 가 섹션 끝까지 유지되도록 부모가 섹션 높이를 가져야 함 */
+  min-height: calc(100vh + var(--cc-scroll, 1600px));
+}
+.case-sec {
+  background: #f3f4f6;
+}
+.cc-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: clamp(36px, 6.5vh, 72px);
+  padding: calc(var(--header-h) + 4vh) 0 4vh;
+  overflow: hidden;
+}
+
+/* ---------- 헤더: 고객사 · 헤드라인 · 핵심 지표 ---------- */
+.cc-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 48px;
+  padding: 0 var(--gutter);
+}
+.cc-customer {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.cc-customer b {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.cc-customer span {
+  font-size: var(--fs-small);
+  color: var(--cool-gray);
+}
+.cc-logo {
+  height: 28px;
+  width: auto;
+}
+.cc-title {
+  font-size: clamp(2rem, 1.3rem + 2.1vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.035em;
+  color: #191f28;
+}
+.cc-stats {
+  display: flex;
+  gap: 0;
+}
+.cc-stats > div {
+  display: grid;
+  gap: 4px;
+  padding: 0 28px;
+}
+.cc-stats > div + div {
+  border-left: 1px solid var(--line);
+}
+.cc-stats > div:last-child {
+  padding-right: 0;
+}
+.cc-stats dt {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1;
+}
+.cc-stats dt b {
+  white-space: nowrap;
+  font-size: clamp(2rem, 1.4rem + 1.8vw, 3rem);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+  color: var(--grib-blue-deep);
+}
+.cc-stats dt span {
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+.cc-stats dd {
+  font-size: 0.8125rem;
+  color: var(--cool-gray);
+}
+
+/* ---------- 카드 트랙 ---------- */
+.cc-viewport {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.cc-track {
+  display: flex;
+  align-items: stretch;
+  gap: 28px;
+  height: 100%;
+  padding: 0 var(--gutter);
+  will-change: transform;
+}
+
+/* 카드: 흰 바탕 · 안쪽 색면 패널 · 아래 두 줄 캡션 (모든 카드 같은 높이·같은 기준선) */
+.cc-card {
+  --pad: 14px;
+  flex: none;
+  width: clamp(300px, 27vw, 420px);
+  height: min(100%, 560px);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: var(--pad);
+  border-radius: 34px;
+  background: var(--white);
+}
+.cc-media {
+  --tint: #ebeef2;
+  position: relative;
+  min-height: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--tint);
+  display: grid;
+  place-items: center;
+}
+.cc-tone--blue .cc-media { --tint: #dfeaf5; }
+.cc-tone--warm .cc-media { --tint: #ebe6df; }
+.cc-tone--gray .cc-media { --tint: #e9ecf0; }
+
+.cc-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.88);
+}
+.cc-tag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cool-gray);
+}
+
+/* 패널 위 흰 UI 카드 */
+.cc-ui {
+  width: 72%;
+  padding: 14px 14px 20px;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: 0 1px 2px rgba(25, 31, 40, 0.04), 0 12px 32px -12px rgba(25, 31, 40, 0.16);
+}
+.cc-ui-img {
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.cc-ui-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85);
+}
+.cc-ui-num {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 0 4px;
+  line-height: 1;
+}
+.cc-ui-num b {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #191f28;
+}
+.cc-ui-num span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4e5968;
+}
+.cc-ui-note {
+  margin-top: 6px;
+  padding: 0 4px;
+  font-size: 0.8125rem;
+  color: #8b95a1;
+}
+.cc-ui--quote {
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  padding: 22px 20px;
+}
+.cc-ui-mark {
+  font-size: 40px;
+  line-height: 0.7;
+  font-weight: 800;
+  color: var(--grib-blue);
+}
+.cc-ui-quote {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.55;
+  color: #333d4b;
+  justify-self: start;
+}
+.cc-ui--quote footer {
+  padding-top: 10px;
+  border-top: 1px solid #f2f4f6;
+  font-size: 0.8125rem;
+  color: #8b95a1;
+}
+
+/* 실적 카드 */
+.cc-card--total .cc-media {
+  --tint: var(--grib-blue-deep);
+  place-items: end start;
+}
+.cc-totals {
+  display: grid;
+  gap: 6px;
+  padding: 28px;
+}
+.cc-totals p {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1;
+  color: var(--white);
+}
+.cc-totals b {
+  font-size: clamp(3.5rem, 2.6rem + 2.4vw, 4.75rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+}
+.cc-totals span {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #cfe3f4;
+}
+
+/* 캡션 — 회색 한 줄 + 굵은 한 줄 */
+.cc-cap {
+  display: grid;
+  gap: 6px;
+  padding: 26px 14px 14px;
+}
+.cc-kicker {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: #6b7684;
+  letter-spacing: -0.01em;
+}
+.cc-title-sm {
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+  color: #191f28;
+}
+
+/* ---------- 하단: 진행 표시 · 출처 ---------- */
+.cc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 var(--gutter);
+}
+.cc-progress {
+  width: 160px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.cc-progress i {
+  display: block;
+  height: 100%;
+  background: var(--grib-blue);
+  transform-origin: left;
+  transform: scaleX(0.08);
+}
+.cc-source {
+  font-size: 0.75rem;
+  color: var(--cool-gray);
+}
+.cc-source a {
+  color: inherit;
+}
+
+/* ======================================================
+ * Tablet / Mobile — 손가락으로 넘기는 캐러셀
+ * ====================================================== */
+@media (max-width: 1023px) {
+  .cc-step,
+  .cc-step .step-inner {
+    min-height: 0;
+  }
+  .cc-pin {
+    position: static;
+    height: auto;
+    padding: calc(var(--header-h) + 24px) 0 48px;
+  }
+  .cc-viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .cc-viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .cc-track {
+    transform: none !important;
+    width: max-content;
+    padding-bottom: 40px;
+  }
+  .cc-card {
+    scroll-snap-align: center;
+    height: 480px;
+  }
+  .cc-progress {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cc-step .step-inner {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .cc-head {
+    padding: 0 20px;
+    margin-bottom: 12px;
+  }
+  .cc-stats > div {
+    padding: 0 18px;
+  }
+  .cc-stats dt {
+    flex-wrap: wrap;
+  }
+  .cc-stats dt b {
+    font-size: 1.75rem;
+  }
+  .cc-stats > div:first-child {
+    padding-left: 0;
+  }
+  .cc-track {
+    padding: 0 20px 36px;
+    gap: 14px;
+  }
+  .cc-card {
+    width: 80vw;
+    max-width: 340px;
+    border-radius: 28px;
+  }
+  .cc-cap {
+    padding: 18px 10px 8px;
+  }
+  .cc-kicker { font-size: 0.9375rem; }
+  .cc-title-sm { font-size: 1.1875rem; }
+  .cc-foot {
+    padding: 0 20px;
+  }
+}
+
+/* 캐러셀 섹션은 장면 전환 시에도 흐려지지 않음 (불투명 배경 위 콘텐츠) */
+.story.is-ready .cc-step .step-inner {
+  opacity: 1;
+}

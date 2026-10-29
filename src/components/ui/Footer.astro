@@ -1,0 +1,52 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../../data/site';
+---
+
+<footer class="site-footer">
+  <div class="site-footer-logo"><Logo tone="gray" /></div>
+  <address>
+    <p><b>{site.company}</b> {site.address}</p>
+    <p>
+      TEL <a href={`tel:${site.tel.replace(/-/g, '')}`}>{site.tel}</a>
+      <span aria-hidden="true">|</span>
+      E-MAIL <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
+  </address>
+  <p class="site-footer-copy">{site.copyright}</p>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 12px;
+    padding: 48px var(--gutter) 56px;
+    background: var(--mist);
+    color: var(--cool-gray);
+    font-size: var(--fs-small);
+  }
+  .site-footer-logo {
+    height: 26px;
+  }
+  address {
+    font-style: normal;
+    display: grid;
+    gap: 4px;
+  }
+  address b {
+    color: var(--charcoal);
+    margin-right: 6px;
+  }
+  address span {
+    margin: 0 8px;
+    color: var(--line);
+  }
+  address a {
+    text-decoration: none;
+  }
+  address a:hover {
+    text-decoration: underline;
+  }
+</style>

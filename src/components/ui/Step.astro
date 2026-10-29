@@ -1,0 +1,48 @@
+---
+/**
+ * Step — 스크롤 스토리의 한 화면(= 하나의 메시지).
+ * 화면 중앙에 도달하면 무대(Stage)가 이 Step 의 view / flags 상태로 바뀝니다.
+ */
+import type { Step } from '../../data/content';
+
+interface Props {
+  step: Step;
+  /** long: 내용이 많은 Step (사례/신뢰) — 높이를 내용에 맞춤 */
+  size?: 'default' | 'tall' | 'long';
+  align?: 'center' | 'start';
+  /**
+   * 데스크톱 화면 구성 (1024px 이상). 모바일은 항상 "무대 위 / 텍스트 아래".
+   *   split-left   텍스트 왼쪽 · 무대 오른쪽
+   *   split-right  무대 왼쪽 · 텍스트 오른쪽
+   *   statement    큰 헤드라인 중앙 · 무대는 아래 넓은 밴드
+   *   stack-top    짧은 메시지 상단 중앙 · 무대는 아래 와이드
+   *   stack-bottom 무대 상단 와이드 · 텍스트는 하단 2단
+   *   voices       헤드라인 + 고객 반응 카드 · 무대는 아래 얇은 띠
+   *   expand       무대가 카드에서 전체 화면으로 확장 · 텍스트 왼쪽 고정
+   *   film         실사 영상 전체 화면 · 텍스트 왼쪽 고정 (작동 과정)
+   *   carousel     무대 숨김 · 화면 고정 후 카드가 가로로 지나감 (운영 사례)
+   *   full         무대 전체 화면 (Hero / CTA)
+   */
+  layout?: 'split-left' | 'split-right' | 'statement' | 'stack-top' | 'stack-bottom' | 'voices' | 'expand' | 'film' | 'carousel' | 'full';
+  class?: string;
+}
+const { step, size = 'default', align = 'center', layout = 'split-left', class: cls } = Astro.props;
+---
+
+<div
+  class:list={['step', `step--${size}`, `step--${align}`, `layout--${layout}`, cls]}
+  id={step.id}
+  data-step
+  data-view={step.view}
+  data-layout={layout}
+  data-flags={(step.flags ?? []).join(' ')}
+  data-focus={(step.focus ?? []).join(' ')}
+  data-temp={step.temp?.join(',')}
+  data-film={step.film?.join(',')}
+  data-cycle={step.cycle ? JSON.stringify(step.cycle) : undefined}
+  style={step.cycle ? `--parts:${step.cycle.length}` : undefined}
+>
+  <div class="step-inner">
+    <slot />
+  </div>
+</div>

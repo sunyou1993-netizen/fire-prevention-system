@@ -1,0 +1,497 @@
+/*
+ * 고객 반응(voices) + 새로운 운영 경험(beyond) 장면
+ *
+ * beyond: 무대가 오른쪽의 작은 카드(b-card)로 줄었다가 전체 화면으로 확장됩니다.
+ *         내부 캔버스는 화면 크기로 고정되어 있어, 무대가 커질수록 가려져 있던 연결망이 드러납니다.
+ */
+
+/* ======================================================
+ * Stage — beyond
+ * ====================================================== */
+.story[data-view='beyond'] .scene {
+  opacity: 0;
+}
+.story[data-view='beyond'] .frame {
+  background: var(--mist);
+}
+
+.beyond-v {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+.story[data-view='beyond'] .beyond-v {
+  opacity: 1;
+}
+.beyond-canvas {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  /* 전체 화면일 때 화면과 일치, 카드일 때는 허브(66%, 50%)가 카드 중앙에 오도록 이동 */
+  left: 0;
+  top: 0;
+  transition: left var(--dur) var(--ease), top var(--dur) var(--ease);
+}
+.story[data-flags~='b-card'] .beyond-canvas {
+  left: calc(50% - 66vw);
+  top: calc(50% - 50vh);
+}
+
+.beyond-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.beyond-lines--m {
+  display: none;
+}
+.bl {
+  stroke: var(--cool-gray-light);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 8;
+  transition: stroke 400ms ease;
+}
+.story[data-view='beyond'] .bl {
+  animation: bl-flow 1.4s linear infinite;
+}
+@keyframes bl-flow {
+  to { stroke-dashoffset: -28; }
+}
+.story[data-flags~='b-1'] :is(.bl--site, .bl--mobile),
+.story[data-flags~='b-2'] .bl--hq,
+.story[data-flags~='b-3'] .bl--next {
+  stroke: var(--grib-blue);
+  stroke-width: 2.5;
+}
+
+/* ---------- 노드 ---------- */
+.bn {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  transition: opacity 450ms var(--ease), transform 600ms var(--ease);
+}
+/* 구간별 강조 — 해당 장소만 또렷하게 */
+.story:is([data-flags~='b-1'], [data-flags~='b-2'], [data-flags~='b-3']) .bn:not(.bn--hub) {
+  opacity: 0.38;
+}
+.story[data-flags~='b-1'] :is(.bn--site, .bn--mobile),
+.story[data-flags~='b-2'] .bn--hq,
+.story[data-flags~='b-3'] .bn--next {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.bn-label {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: nowrap;
+  text-align: center;
+}
+.bn-label b {
+  font-weight: 700;
+  color: var(--charcoal);
+}
+.bn-label span {
+  color: var(--cool-gray);
+  font-size: 12px;
+}
+
+.bn--hub {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  align-content: center;
+  gap: 0;
+  background: var(--white);
+  box-shadow: 0 0 0 1px var(--line), 0 18px 40px -12px rgba(0, 87, 143, 0.35);
+}
+.bn--hub b {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: var(--grib-blue);
+}
+.bn--hub small {
+  font-size: 12px;
+  color: var(--cool-gray);
+}
+.bn-hub-ring {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--grib-blue-soft);
+  animation: hub-ring 2.8s ease-out infinite;
+}
+@keyframes hub-ring {
+  from { transform: scale(0.9); opacity: 1; }
+  to { transform: scale(1.35); opacity: 0; }
+}
+
+.bn-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 0 0 0 1px var(--line), 0 16px 36px -14px rgba(16, 38, 60, 0.28);
+}
+.bn-card--photo {
+  width: clamp(180px, 16vw, 250px);
+  aspect-ratio: 16 / 10;
+}
+.bn-card--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 50%;
+  filter: saturate(0.85);
+}
+.bn-chip {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--grib-blue-deep);
+}
+.bn-card--hq {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  width: clamp(240px, 21vw, 320px);
+  padding: 12px;
+}
+.bn-card--hq img {
+  width: 96px;
+  height: auto;
+}
+.bn-report {
+  display: grid;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--cool-gray);
+}
+.bn-report li {
+  display: grid;
+  gap: 3px;
+}
+.bn-report i {
+  display: block;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--grib-blue) var(--w), var(--line) var(--w));
+}
+.bn-phone {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  width: 128px;
+  aspect-ratio: 9 / 16;
+  padding: 12px 8px;
+  border-radius: 22px;
+  background: var(--mist);
+  box-shadow: 0 0 0 6px var(--charcoal), 0 18px 36px -10px rgba(16, 38, 60, 0.4);
+  font-size: 10px;
+  line-height: 1.35;
+}
+.bn-phone-app {
+  text-align: center;
+  font-weight: 800;
+  color: var(--grib-blue);
+  margin-bottom: 4px;
+}
+.bn-push {
+  display: grid;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--white);
+  border-left: 3px solid var(--alarm);
+}
+.bn-push b { color: var(--alarm); }
+.bn-push span { color: var(--cool-gray); }
+.bn-push--ok { border-color: var(--grib-blue); }
+.bn-push--ok b { color: var(--grib-blue-deep); }
+.bn-card--next {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  width: clamp(160px, 13vw, 200px);
+  aspect-ratio: 16 / 10;
+  background: transparent;
+  box-shadow: none;
+  border: 1.5px dashed var(--cool-gray-light);
+  transition: border-color 400ms ease, background-color 400ms ease;
+}
+.bn-card--next b { font-size: 14px; }
+.bn-card--next small { font-size: 11px; color: var(--cool-gray); }
+.bn-plus {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+}
+.bn-plus::before,
+.bn-plus::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 2px;
+  background: var(--grib-blue);
+  transform: translate(-50%, -50%);
+}
+.bn-plus::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+.story[data-flags~='b-3'] .bn-card--next {
+  border-style: solid;
+  border-color: var(--grib-blue);
+  background: var(--white);
+}
+
+/* 카드 상태에서는 라벨 보조 문구를 숨겨 간결하게 */
+.story[data-flags~='b-card'] .bn-label span {
+  opacity: 0;
+}
+
+/* 텍스트 가독용 스크림 (전체 화면일 때) */
+.beyond-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(244, 246, 248, 0.97) 0%, rgba(244, 246, 248, 0.9) 30%, rgba(244, 246, 248, 0) 46%);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+.story[data-view='beyond']:not([data-flags~='b-card']) .beyond-scrim {
+  opacity: 1;
+}
+
+/* ======================================================
+ * Text — beyond / voices
+ * ====================================================== */
+.beyond-list {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  counter-reset: b;
+}
+.beyond-list li {
+  display: grid;
+  gap: 4px;
+  padding: 14px 0 14px 18px;
+  border-left: 2px solid var(--line);
+  transition: opacity 400ms var(--ease), border-color 400ms var(--ease);
+}
+.beyond-list h3 {
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+.beyond-list p {
+  font-size: 0.9375rem;
+  color: #4b5663;
+}
+.beyond[data-sub] .beyond-list li {
+  opacity: 0.4;
+}
+.beyond[data-sub='1'] li[data-part='1'],
+.beyond[data-sub='2'] li[data-part='2'],
+.beyond[data-sub='3'] li[data-part='3'] {
+  opacity: 1;
+  border-left-color: var(--grib-blue);
+}
+
+.voices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+  text-align: left;
+}
+.voice {
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+  padding: 22px 22px 18px;
+  border-radius: var(--radius-md);
+  background: var(--white);
+  box-shadow: 0 0 0 1px var(--line), 0 16px 36px -18px rgba(16, 38, 60, 0.25);
+}
+.voice blockquote {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.voice-quote {
+  position: relative;
+  padding-top: 26px;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.55;
+  justify-self: start;
+}
+.voice-quote::before {
+  content: '“';
+  position: absolute;
+  left: 0;
+  top: -6px;
+  font-size: 44px;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--grib-blue);
+}
+.voice-topic {
+  font-size: 0.8125rem;
+  color: var(--cool-gray);
+}
+.voice-by {
+  display: grid;
+  gap: 2px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+}
+.voice-by span {
+  justify-self: start;
+  color: var(--cool-gray);
+}
+
+/* ======================================================
+ * Desktop
+ * ====================================================== */
+@media (min-width: 1024px) {
+  /* 무대: 카드 → 전체 화면 */
+  .story[data-layout='expand']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 0%;
+    --ft: 0%;
+    --fw: 100%;
+    --fh: 100%;
+    --fr: 0px;
+  }
+  .story[data-layout='expand'][data-flags~='b-card']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 56%;
+    --ft: calc(var(--header-h) + 12vh);
+    --fw: 30%;
+    --fh: 64vh;
+    --fr: 28px;
+  }
+  .story[data-layout='voices']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 13%;
+    --fw: 74%;
+    --ft: 72vh;
+    --fh: 24vh;
+  }
+
+  /* 고정 텍스트 — 활성 장면에서만 표시 */
+  .story.is-ready :is(.layout--expand, .layout--voices) .step-inner {
+    position: fixed;
+    z-index: 3;
+    opacity: 0;
+    transform: translateY(18px);
+    pointer-events: none;
+    transition: opacity 480ms var(--ease), transform 640ms var(--ease);
+  }
+  .story.is-ready :is(.layout--expand, .layout--voices).is-active .step-inner {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 120ms;
+  }
+  .story.is-ready:is([data-layout='expand'], [data-layout='voices']) .step:not(.is-active) .step-inner {
+    opacity: 0;
+  }
+
+  .story.is-ready .layout--expand .step-inner {
+    top: calc(var(--header-h) + 11vh);
+    left: var(--gutter);
+    width: min(36vw, 520px);
+  }
+  .beyond-title {
+    font-size: clamp(2.25rem, 1.3rem + 2.6vw, 3.75rem);
+  }
+  .beyond[data-sub='0'] .beyond-list {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .beyond .beyond-list {
+    transition: opacity 500ms var(--ease), transform 600ms var(--ease);
+  }
+
+  .layout--voices {
+    justify-content: center;
+    text-align: center;
+  }
+  .layout--voices .step-inner {
+    width: min(1160px, 88vw);
+    justify-items: center;
+  }
+  .story.is-ready .layout--voices .step-inner {
+    top: calc(var(--header-h) + 6vh);
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+  }
+  .layout--voices .voices {
+    width: 100%;
+  }
+}
+
+/* ======================================================
+ * Tablet / Mobile
+ * ====================================================== */
+@media (max-width: 1023px) {
+  .story[data-view='beyond']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fh: 52svh;
+  }
+  .beyond-canvas,
+  .story[data-flags~='b-card'] .beyond-canvas {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .beyond-lines { display: none; }
+  .beyond-lines--m { display: block; }
+  .bn {
+    left: var(--mx);
+    top: var(--my);
+    gap: 6px;
+  }
+  .bn--hub { width: 84px; height: 84px; }
+  .bn--hub b { font-size: 12px; }
+  .bn--hub small { font-size: 10px; }
+  .bn-label { font-size: 11px; }
+  .bn-label span { display: none; }
+  .bn-card--photo { width: 120px; }
+  .bn-card--hq { width: 132px; grid-template-columns: 1fr; padding: 8px; }
+  .bn-card--hq img { width: 100%; }
+  .bn-report { display: none; }
+  .bn-phone { width: 64px; padding: 8px 5px; border-radius: 14px; box-shadow: 0 0 0 4px var(--charcoal); font-size: 7px; }
+  .bn-push { padding: 4px; }
+  .bn-push span { display: none; }
+  .bn-card--next { width: 110px; }
+  .beyond-scrim { display: none; }
+
+  .voices {
+    grid-template-columns: 1fr;
+  }
+}
+
+

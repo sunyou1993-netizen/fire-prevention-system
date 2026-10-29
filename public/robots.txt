@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# 배포 도메인에 맞게 수정하세요
+Sitemap: https://www.grib.co.kr/sitemap-index.xml

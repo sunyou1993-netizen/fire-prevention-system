@@ -1,0 +1,18 @@
+---
+/** SCENE 09 — FINAL CTA: 처음의 주방으로 돌아와, 모든 시스템이 정상인 상태 */
+import Step from '../components/ui/Step.astro';
+import Button from '../components/ui/Button.astro';
+import { cta } from '../data/content';
+---
+
+<section class="scene-sec" aria-labelledby="cta-title">
+  <Step step={cta.step} layout="full">
+    <h2 id="cta-title" class="t-display t-display--cta">
+      {cta.title.map((l, i) => <>{l}{i < cta.title.length - 1 && <br />}</>)}
+    </h2>
+    <p class="t-lead pre-line">{cta.body}</p>
+    <div class="cta-actions">
+      <Button href="#contact">{cta.primary}</Button>
+    </div>
+  </Step>
+</section>

@@ -1,0 +1,54 @@
+/*
+ * GRIB Design Tokens
+ * Blue 는 브랜드·정상 상태, Red 는 실제 경보 상태에만 사용합니다.
+ */
+:root {
+  /* Brand */
+  --grib-blue: #007dcb;        /* 로고 기준 GRIB Blue */
+  --grib-blue-deep: #00578f;   /* 텍스트·hover */
+  --grib-blue-soft: #d7ebf8;
+  --grib-blue-tint: #eef6fc;
+
+  /* Neutrals */
+  --white: #ffffff;
+  --mist: #f4f6f8;             /* Very Light Gray */
+  --line: #dde3e9;
+  --cool-gray: #6b7684;        /* Cool Gray */
+  --cool-gray-light: #a3acb7;
+  --charcoal: #1e2731;         /* Charcoal */
+
+  /* State — 경보 전용 */
+  --alarm: #e2352b;
+  --alarm-tint: #fdecea;
+
+  /* Type */
+  --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --fs-display: clamp(2.5rem, 1.6rem + 3.4vw, 4.75rem);
+  --fs-h2: clamp(2rem, 1.35rem + 2.4vw, 3.5rem);
+  --fs-h3: clamp(1.625rem, 1.2rem + 1.5vw, 2.625rem);
+  --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --lh-tight: 1.22;
+  --lh-body: 1.65;
+  --track-tight: -0.035em;
+
+  /* Space */
+  --gutter: clamp(20px, 5vw, 88px);
+  --radius-lg: 24px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.21, 1);
+  --dur: 700ms;
+  --dur-fast: 320ms;
+
+  --header-h: 64px;
+}
+
+
+/* GNB 높이: 데스크톱은 메뉴 영역이 넓어 72px */
+@media (min-width: 1024px) {
+  :root { --header-h: 72px; }
+}

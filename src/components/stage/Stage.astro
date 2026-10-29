@@ -1,0 +1,178 @@
+---
+/**
+ * Stage — 페이지 전체의 Visual Anchor.
+ * 하나의 주방 Scene 이 스크롤 상태(view / flags)에 따라
+ *   주방 → 감지·차단 → 관제 알림 → 운영 대시보드 → 가치 요약
+ *   → 문제별 대응 → 시스템 구조(Exploded) → 다중 사업장 → 정상 주방
+ * 으로 변형됩니다. 상태는 src/scripts/story.ts 가 .story 루트에 기록합니다.
+ *
+ * 모든 핵심 정보는 Scene 컴포넌트의 HTML 텍스트에 있으므로
+ * Stage 는 보조 시각 요소(aria-hidden)로 취급합니다.
+ */
+import { Image } from 'astro:assets';
+import KitchenIllustration from './KitchenIllustration.astro';
+import Dashboard from './Dashboard.astro';
+import CtaVisual from './CtaVisual.astro';
+import FilmLayer from './FilmLayer.astro';
+import { devices, tiers, links, kettle, kitchenMedia } from '../../data/stage';
+
+const byId = Object.fromEntries(devices.map((d) => [d.id, d]));
+
+const hasVideo = Boolean(kitchenMedia.video.mp4 || kitchenMedia.video.webm);
+---
+
+<div class="stage" aria-hidden="true">
+  <div class="frame">
+    <div class="scene">
+      <div class="cam" style={`--zox:${kettle.x}%;--zoy:${kettle.y}%`}>
+        <div class="scene-media">
+          <KitchenIllustration />
+          {kitchenMedia.poster && <img class="scene-poster" src={kitchenMedia.poster} alt="" fetchpriority="high" decoding="async" />}
+          {
+            hasVideo && (
+              <video class="scene-video" muted loop playsinline preload="none" poster={kitchenMedia.poster || undefined} data-autoplay>
+                {kitchenMedia.video.webm && <source data-src={kitchenMedia.video.webm} type="video/webm" />}
+                {kitchenMedia.video.mp4 && <source data-src={kitchenMedia.video.mp4} type="video/mp4" />}
+              </video>
+            )
+          }
+        </div>
+
+        <!-- 감지 시각화 (Scene 좌표계 1600×1000) -->
+        <svg class="sense" viewBox="0 0 1600 1000" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="radar-g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="currentColor" stop-opacity="0.38" />
+              <stop offset="1" stop-color="currentColor" stop-opacity="0.04" />
+            </linearGradient>
+          </defs>
+          <g class="sense-radar">
+            <path d="M696 312 L520 842 H880 Z" fill="url(#radar-g)" />
+            <path d="M696 312 L520 842 M696 312 L880 842" stroke="currentColor" stroke-width="2" stroke-dasharray="6 8" fill="none" opacity="0.7" />
+            <ellipse cx="700" cy="842" rx="180" ry="20" fill="none" stroke="currentColor" stroke-width="2" opacity="0.6" />
+          </g>
+          <g class="sense-ir">
+            <path d="M984 312 L898 560" stroke="currentColor" stroke-width="3" stroke-dasharray="8 8" fill="none" />
+            <circle cx="896" cy="563" r="16" fill="none" stroke="currentColor" stroke-width="3" />
+            <circle cx="896" cy="563" r="4" fill="currentColor" />
+          </g>
+        </svg>
+
+        <!-- 시스템 구조 연결선 (WHY GRIB) -->
+        <svg class="arch-links" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {
+            links.map(([a, b]) => {
+              const A = byId[a], B = byId[b];
+              return (
+                <line
+                  class="arch-link"
+                  data-a={a}
+                  data-b={b}
+                  data-groups={[...new Set([...A.groups, ...B.groups])].join(' ')}
+                  x1={A.ax} y1={A.ay} x2={B.ax} y2={B.ay}
+                  vector-effect="non-scaling-stroke"
+                />
+              );
+            })
+          }
+        </svg>
+
+        <svg class="arch-links arch-links--m" viewBox="0 0 100 100" preserveAspectRatio="none">
+          {
+            links.map(([a, b]) => (
+              <line
+                class="arch-link"
+                data-a={a}
+                data-b={b}
+                x1={byId[a].mx} y1={byId[a].my} x2={byId[b].mx} y2={byId[b].my}
+                vector-effect="non-scaling-stroke"
+              />
+            ))
+          }
+        </svg>
+
+        <div class="arch-tiers">
+          {
+            tiers.map((t) => (
+              <p class="arch-tier" style={`--ty:${t.y}%`}>
+                <span>{t.label}</span>
+                <small>{t.en}</small>
+              </p>
+            ))
+          }
+        </div>
+        <div class="arch-protocols">
+          {
+            links.filter((l) => l[2]).map(([a, b, label]) => (
+              <span
+                class="arch-protocol"
+                style={`--px:${(byId[a].ax + byId[b].ax) / 2}%;--py:${(byId[a].ay + byId[b].ay) / 2}%`}
+              >
+                {label}
+              </span>
+            ))
+          }
+        </div>
+
+        <!-- 실제 GRIB 장비 -->
+        <ul class="devices">
+          {
+            devices.map((d) => (
+              <li
+                class:list={['device', `device--${d.id}`, `tier-${d.tier}`, { 'arch-only': d.archOnly }]}
+                data-device={d.id}
+                data-groups={d.groups.join(' ')}
+                style={`--x:${d.x}%;--y:${d.y}%;--ax:${d.ax}%;--ay:${d.ay}%;--mx:${d.mx}%;--my:${d.my}%`}
+              >
+                <span class="device-dot" />
+                <span class="device-tile">
+                  <Image src={d.img} alt="" width={d.img.width} height={d.img.height} format="webp" quality={90} />
+                </span>
+                <span class="device-label">
+                  <b>{d.name}</b>
+                  <span class="device-state" data-role={d.role} />
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <!-- 실시간 온도 -->
+        <div class="temp-tag" style={`--tx:${kettle.x + 9}%;--ty:${kettle.y - 15}%`}>
+          <span class="temp-name">조리기구 표면 온도</span>
+          <span class="temp-val tnum"><b data-temp>168</b>℃</span>
+          <span class="temp-bar"><i data-temp-bar></i><em title="설정 기준"></em></span>
+          <span class="temp-ref">위험 기준 220℃ (현장별 설정)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 실사 원테이크 영상 (첫 화면 ~ 작동 과정) -->
+    <FilmLayer />
+
+
+    <!-- 새로운 운영 경험 — 카드에서 전체 화면으로 확장 -->
+
+    <!-- 최종 정상 상태 (FINAL CTA) — 실제 주방 사진 + 모니터링 패널 -->
+    <CtaVisual />
+
+    <Dashboard />
+
+    <!-- 모바일 알림 -->
+    <div class="phone">
+      <div class="phone-screen">
+        <p class="phone-app">ALLSAFER</p>
+        <div class="phone-push">
+          <b>가스 밸브 자동 차단</b>
+          <span>SITE 01 조리실 · 과열 231℃ · 조리원 부재</span>
+        </div>
+        <div class="phone-push phone-push--ok">
+          <b>SITE 02 ~ 06</b>
+          <span>모든 장비 정상</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scrim"></div>
+  </div>
+</div>

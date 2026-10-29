@@ -1,0 +1,534 @@
+---
+/**
+ * GNB — 로고 · 솔루션 · 디바이스 · 도입사례 · 회사 · 전화번호 · 컨설팅 받기
+ * 데스크톱(1024px 이상): 상위 메뉴는 가운데에 촘촘히 놓이고, 마우스를 올리거나 키보드로 들어가면
+ *   흰 배경 패널이 아래로 열려 네 메뉴의 하위 항목이 한꺼번에 보입니다(올린 메뉴의 열이 강조됨).
+ * 모바일: 햄버거 버튼 → 전체 화면 메뉴(메뉴별 펼치기).
+ * 메뉴 내용은 src/data/nav.ts
+ */
+import Logo from './Logo.astro';
+import { site } from '../../data/site';
+import { gnb } from '../../data/nav';
+const telHref = `tel:${site.tel.replace(/[^0-9+]/g, '')}`;
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isHere = (href: string) => href.replace(/#.*$/, '').replace(/\/?$/, '/') === path && !href.includes('#');
+const menuHere = (m: (typeof gnb)[number]) => (path !== '/' && path.startsWith(m.href)) || m.groups.some((g) => g.links.some((l) => isHere(l.href)));
+---
+
+<header class="gnb" data-gnb>
+  <div class="gnb-bar">
+    <a href={site.homepage} class="gnb-logo" aria-label={`${site.brand} 홈페이지`}>
+      <Logo />
+    </a>
+
+    <nav class="gnb-nav" aria-label="주 메뉴">
+      <ul class="gnb-menu">
+        {
+          gnb.map((m, i) => {
+            return (
+              <li>
+                <a href={m.href} class:list={['gnb-top', { 'is-current': menuHere(m) }]} aria-current={path === m.href ? 'page' : undefined} data-gnb-top={i}>
+                  {m.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <div class="gnb-util">
+      <a href={telHref} class="gnb-tel">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-1.9 1.3a12 12 0 0 0 6.5 6.5l1.3-1.9 4 1.4v2.6a2.1 2.1 0 0 1-2.3 2.1C10.6 18.9 5.1 13.4 4.5 5.8a2.1 2.1 0 0 1 2.1-2.3z" /></svg>
+        <span>{site.tel}</span>
+      </a>
+      <a href="/#contact" class="gnb-cta">컨설팅 받기</a>
+      <button type="button" class="gnb-burger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="gnb-drawer" data-gnb-burger>
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 데스크톱 메가 메뉴 패널 -->
+  <div class="gnb-panel" id="gnb-panel" data-gnb-panel>
+    <div class="gnb-panel-inner">
+      {
+        gnb.map((m, i) => (
+          <div class="gnb-pcol" data-col={i}>
+            <p class="gnb-pcol-cap">{m.label}</p>
+            {m.groups.map((g) => (
+              <div class="gnb-group">
+                {g.title && <p class="gnb-group-title">{g.title}</p>}
+                <ul>
+                  {g.links.map((l) => (
+                    <li>
+                      <a href={l.href} class:list={{ 'is-current': isHere(l.href) }} aria-current={isHere(l.href) ? 'page' : undefined}>
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- 모바일 메뉴 -->
+  <div class="gnb-drawer" id="gnb-drawer" data-gnb-drawer>
+    <nav aria-label="모바일 메뉴">
+      {
+        gnb.map((m) => (
+          <details class="gnb-acc" open={menuHere(m)}>
+            <summary>{m.label}</summary>
+            <div class="gnb-acc-body">
+              <a href={m.href} class="gnb-acc-all">{m.label} 전체 보기 →</a>
+              {m.groups.map((g) => (
+                <div class="gnb-group">
+                  {g.title && <p class="gnb-group-title">{g.title}</p>}
+                  <ul>
+                    {g.links.map((l) => (
+                      <li>
+                        <a href={l.href} class:list={{ 'is-current': isHere(l.href) }} aria-current={isHere(l.href) ? 'page' : undefined}>
+                          {l.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </details>
+        ))
+      }
+    </nav>
+    <div class="gnb-drawer-util">
+      <a href={telHref} class="gnb-tel">{site.tel}</a>
+      <a href="/#contact" class="gnb-cta" data-gnb-close>컨설팅 받기</a>
+    </div>
+  </div>
+  <div class="gnb-dim" data-gnb-dim></div>
+</header>
+
+<script>
+  const gnb = document.querySelector<HTMLElement>('[data-gnb]');
+  if (gnb) {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const nav = gnb.querySelector<HTMLElement>('.gnb-nav')!;
+    const tops = Array.from(gnb.querySelectorAll<HTMLAnchorElement>('[data-gnb-top]'));
+    const burger = gnb.querySelector<HTMLButtonElement>('[data-gnb-burger]')!;
+    let closeTimer = 0;
+
+    const setOpen = (open: boolean) => {
+      gnb.classList.toggle('is-open', open);
+    };
+    const setDrawer = (open: boolean) => {
+      gnb.classList.toggle('is-drawer', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기');
+      document.documentElement.classList.toggle('gnb-lock', open);
+    };
+
+    // 데스크톱: 마우스를 올리면 열림, 헤더 밖으로 나가면 닫힘
+    nav.addEventListener('mouseenter', () => {
+      if (!desktop.matches) return;
+      clearTimeout(closeTimer);
+      setOpen(true);
+    });
+    tops.forEach((b) => {
+      const mark = () => (gnb.dataset.col = b.dataset.gnbTop);
+      b.addEventListener('mouseenter', mark);
+      b.addEventListener('focus', mark);
+    });
+    gnb.querySelectorAll<HTMLElement>('.gnb-pcol').forEach((c) => c.addEventListener('mouseenter', () => (gnb.dataset.col = c.dataset.col)));
+    gnb.querySelector('[data-gnb-panel]')!.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+    gnb.addEventListener('mouseleave', () => {
+      if (!desktop.matches) return;
+      closeTimer = window.setTimeout(() => setOpen(false), 120);
+    });
+    gnb.querySelector('.gnb-bar')!.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+    // 키보드·터치: 메뉴 버튼으로 열고 닫기
+    gnb.addEventListener('focusout', (e) => {
+      if (desktop.matches && !gnb.contains(e.relatedTarget as Node)) setOpen(false);
+    });
+    nav.addEventListener('focusin', () => desktop.matches && setOpen(true));
+    gnb.querySelector('[data-gnb-panel]')!.addEventListener('focusin', () => desktop.matches && setOpen(true));
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (gnb.classList.contains('is-drawer')) { setDrawer(false); burger.focus(); }
+      else if (gnb.classList.contains('is-open')) { setOpen(false); tops[0]?.focus(); }
+    });
+    const dim = gnb.querySelector('[data-gnb-dim]')!;
+    dim.addEventListener('click', () => setOpen(false));
+    dim.addEventListener('mouseenter', () => { if (desktop.matches) closeTimer = window.setTimeout(() => setOpen(false), 120); });
+
+    // 모바일 메뉴
+    burger.addEventListener('click', () => setDrawer(!gnb.classList.contains('is-drawer')));
+    gnb.querySelectorAll('.gnb-drawer a').forEach((a) => a.addEventListener('click', () => setDrawer(false)));
+    gnb.querySelectorAll('.gnb-panel a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    desktop.addEventListener('change', () => { setOpen(false); setDrawer(false); });
+
+    // 스크롤을 내리면 숨기고, 올리면 다시 보여줌 (메뉴가 열려 있을 때·페이지 맨 위에서는 항상 표시)
+    let lastY = window.scrollY, ticking = false, acc = 0;
+    const onScroll = () => {
+      ticking = false;
+      const y = window.scrollY;
+      const dy = y - lastY;
+      lastY = y;
+      if (gnb.classList.contains('is-open') || gnb.classList.contains('is-drawer') || y < 80) {
+        gnb.classList.remove('is-hidden');
+        acc = 0;
+        return;
+      }
+      acc = Math.sign(dy) === Math.sign(acc) ? acc + dy : dy;
+      if (acc > 12) gnb.classList.add('is-hidden');
+      else if (acc < -8) gnb.classList.remove('is-hidden');
+    };
+    window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    gnb.addEventListener('focusin', () => gnb.classList.remove('is-hidden'));
+  }
+</script>
+
+<style>
+  .gnb {
+    --gnb-logo-w: 180px;
+    --gnb-util-w: 300px;
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    transition: transform 320ms var(--ease), box-shadow 240ms ease;
+  }
+  .gnb.is-hidden {
+    transform: translateY(calc(-100% - 2px));
+  }
+  .gnb-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    position: relative;
+    padding: 0 var(--gutter);
+    background: var(--white);
+  }
+  .gnb-logo,
+  .gnb-util {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+  }
+  .gnb-logo {
+    justify-self: start;
+    padding: 18px 0;
+    box-sizing: border-box;
+  }
+
+  /* 상위 메뉴: 가운데, 촘촘하게 */
+  .gnb-menu {
+    display: flex;
+    gap: clamp(32px, 3.2vw, 52px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .gnb-top {
+    text-decoration: none;
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #191f28;
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+  }
+  .gnb-top::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--grib-blue);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms var(--ease);
+  }
+  .gnb-top:hover::after,
+  .gnb-top.is-current::after,
+  .gnb[data-col='0'].is-open .gnb-menu li:nth-child(1) .gnb-top::after,
+  .gnb[data-col='1'].is-open .gnb-menu li:nth-child(2) .gnb-top::after,
+  .gnb[data-col='2'].is-open .gnb-menu li:nth-child(3) .gnb-top::after,
+  .gnb[data-col='3'].is-open .gnb-menu li:nth-child(4) .gnb-top::after {
+    transform: scaleX(1);
+  }
+  .gnb-top:hover,
+  .gnb-top.is-current {
+    color: var(--grib-blue);
+  }
+
+  /* 메가 메뉴 패널 */
+  .gnb-panel {
+    position: relative;
+    max-height: 0;
+    overflow: hidden;
+    background: var(--white);
+    opacity: 0;
+    transition: max-height 360ms var(--ease), opacity 240ms ease;
+  }
+  .gnb.is-open .gnb-panel {
+    max-height: 640px;
+    opacity: 1;
+    border-top: 1px solid var(--line);
+  }
+  .gnb-panel-inner {
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    column-gap: clamp(48px, 5vw, 88px);
+    justify-content: center;
+    padding: 28px var(--gutter) 40px;
+  }
+  .gnb-pcol {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 0 4px;
+    transition: opacity 200ms ease;
+  }
+  .gnb-pcol-cap {
+    margin: 0 0 2px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #8b95a1;
+    transition: color 200ms ease, border-color 200ms ease;
+  }
+  .gnb[data-col='0'] .gnb-pcol[data-col='0'] .gnb-pcol-cap,
+  .gnb[data-col='1'] .gnb-pcol[data-col='1'] .gnb-pcol-cap,
+  .gnb[data-col='2'] .gnb-pcol[data-col='2'] .gnb-pcol-cap,
+  .gnb[data-col='3'] .gnb-pcol[data-col='3'] .gnb-pcol-cap {
+    color: var(--grib-blue);
+    border-color: var(--grib-blue);
+  }
+  .gnb-group-title {
+    margin: 0 0 6px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #191f28;
+  }
+  .gnb-group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+  }
+  .gnb-group a {
+    display: inline-block;
+    padding: 2px 0;
+    font-size: 0.9375rem;
+    color: #4e5968;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+  .gnb-group a:hover,
+  .gnb-group a:focus-visible {
+    color: var(--grib-blue);
+  }
+  .gnb-group a.is-current {
+    color: var(--grib-blue);
+    font-weight: 700;
+  }
+  .gnb-group a.is-current::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin: 0 7px 2px 0;
+    border-radius: 50%;
+    background: var(--grib-blue);
+    vertical-align: middle;
+  }
+  .gnb.is-open {
+    box-shadow: 0 24px 48px rgba(25, 31, 40, 0.08);
+  }
+  .gnb.is-open .gnb-bar {
+    border-bottom: 0;
+  }
+
+  /* 오른쪽: 전화번호 · 컨설팅 받기 */
+  .gnb-util {
+    justify-self: end;
+    justify-content: flex-end;
+    gap: 18px;
+  }
+  .gnb-tel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #191f28;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .gnb-tel svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+  }
+  .gnb-tel:hover { color: var(--grib-blue); }
+  .gnb-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 10px;
+    background: var(--grib-blue);
+    color: var(--white);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .gnb-cta:hover { background: var(--grib-blue-deep); }
+
+  /* 메뉴가 열리면 아래 화면을 살짝 어둡게 */
+  .gnb-dim {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: rgba(25, 31, 40, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 240ms ease;
+  }
+  .gnb.is-open .gnb-dim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .gnb-burger,
+  .gnb-drawer {
+    display: none;
+  }
+
+  @media (min-width: 1024px) and (max-width: 1240px) {
+    .gnb-tel span { display: none; }
+  }
+
+  /* ---------- 모바일 ---------- */
+  @media (max-width: 1023px) {
+    .gnb-bar {
+      grid-template-columns: auto 1fr;
+      padding: 0 16px;
+    }
+    .gnb-nav,
+    .gnb-dim,
+    .gnb-panel {
+      display: none;
+    }
+    .gnb-logo { padding: 16px 0; }
+    .gnb-util { gap: 8px; }
+    .gnb-util .gnb-tel { display: none; }
+    .gnb-util .gnb-cta { min-height: 36px; padding: 0 14px; font-size: 0.875rem; }
+    .gnb-burger {
+      display: inline-grid;
+      align-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      padding: 0 9px;
+      border: 0;
+      background: none;
+      cursor: pointer;
+    }
+    .gnb-burger span {
+      display: block;
+      height: 2px;
+      border-radius: 2px;
+      background: #191f28;
+      transition: transform 240ms var(--ease), opacity 160ms ease;
+    }
+    .gnb.is-drawer .gnb-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .gnb.is-drawer .gnb-burger span:nth-child(2) { opacity: 0; }
+    .gnb.is-drawer .gnb-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .gnb-drawer {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 8px 20px 24px;
+      background: var(--white);
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 200ms ease, transform 240ms var(--ease), visibility 0s linear 240ms;
+    }
+    .gnb.is-drawer .gnb-drawer {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      transition: opacity 200ms ease, transform 240ms var(--ease);
+    }
+    .gnb-acc {
+      border-bottom: 1px solid var(--line);
+    }
+    .gnb-acc summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #191f28;
+      list-style: none;
+      cursor: pointer;
+    }
+    .gnb-acc summary::-webkit-details-marker { display: none; }
+    .gnb-acc summary::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid #8b95a1;
+      border-bottom: 2px solid #8b95a1;
+      transform: rotate(45deg) translateY(-3px);
+      transition: transform 200ms ease;
+    }
+    .gnb-acc[open] summary::after { transform: rotate(-135deg) translateY(-3px); }
+    .gnb-acc-body {
+      display: grid;
+      gap: 16px;
+      padding: 0 0 20px;
+    }
+    .gnb-acc-body .gnb-group a { font-size: 1rem; padding: 4px 0; }
+    .gnb-acc-all { font-size: 0.9375rem; font-weight: 700; color: var(--grib-blue); text-decoration: none; }
+    .gnb-drawer-util {
+      display: grid;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 24px;
+    }
+    .gnb-drawer-util .gnb-tel { justify-content: center; min-height: 48px; border: 1px solid var(--line); border-radius: 12px; }
+    .gnb-drawer-util .gnb-cta { justify-content: center; min-height: 52px; font-size: 1rem; }
+  }
+  :global(html.gnb-lock) { overflow: hidden; }
+
+  
+</style>

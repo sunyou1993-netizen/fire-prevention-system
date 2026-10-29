@@ -1,0 +1,77 @@
+/* 도입과 운영 — 일반 흐름 */
+.sc2-sec { background: #f6f8fa; }
+.sc2-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: calc(var(--header-h) + 96px) var(--gutter) 128px;
+  display: grid;
+  gap: 72px;
+}
+.sc2-proc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  counter-reset: none;
+  position: relative;
+}
+.sc2-proc::before {
+  content: '';
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 21px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--grib-blue) 0%, var(--grib-blue-soft) 100%);
+}
+.sc2-proc li { position: relative; display: grid; gap: 10px; align-content: start; padding-right: 18px; }
+.sc2-n {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--grib-blue);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--grib-blue);
+  position: relative;
+}
+.sc2-proc h3 { margin: 8px 0 0; font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.02em; color: #191f28; }
+.sc2-proc p { margin: 0; font-size: 0.9375rem; line-height: 1.6; color: #4e5968; }
+.sc2-block { display: grid; gap: 22px; }
+.sc2-label { margin: 0; font-size: 1.0625rem; font-weight: 700; color: #4e5968; }
+.sc2-effects,
+.sc2-trust { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.sc2-effects { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sc2-trust { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.sc2-effects li,
+.sc2-trust li {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 28px 28px 26px;
+  border-radius: 24px;
+  background: #fff;
+}
+.sc2-effects b { font-size: clamp(1.25rem, 1.05rem + 0.55vw, 1.5rem); line-height: 1.4; letter-spacing: -0.03em; color: #191f28; }
+.sc2-trust b { font-size: 1.1875rem; line-height: 1.45; letter-spacing: -0.025em; color: #191f28; }
+.sc2-effects p,
+.sc2-trust p { margin: 0; font-size: 1rem; line-height: 1.65; color: #4e5968; }
+.sc2-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.sc2-chips i { font-style: normal; font-size: 0.875rem; font-weight: 600; color: var(--grib-blue-deep); padding: 5px 11px; border-radius: 999px; background: var(--grib-blue-tint); }
+
+@media (max-width: 1023px) {
+  .sc2-wrap { padding: calc(var(--header-h) + 48px) 20px 80px; gap: 48px; }
+  .sc2-proc { grid-template-columns: 1fr; gap: 0; }
+  .sc2-proc::before { left: 21px; right: auto; top: 22px; bottom: 22px; width: 2px; height: auto; background: linear-gradient(180deg, var(--grib-blue), var(--grib-blue-soft)); }
+  .sc2-proc li { grid-template-columns: 44px 1fr; column-gap: 16px; row-gap: 2px; padding: 0 0 22px; }
+  .sc2-proc li .sc2-n { grid-row: span 2; }
+  .sc2-proc h3 { margin: 10px 0 0; }
+  .sc2-effects,
+  .sc2-trust { grid-template-columns: 1fr; }
+  .sc2-effects li,
+  .sc2-trust li { padding: 22px 20px; border-radius: 20px; }
+}

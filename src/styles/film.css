@@ -1,0 +1,204 @@
+/*
+ * 실사 원테이크 영상 (view: film)
+ * 첫 화면과 작동 과정에서 무대 전체를 영상이 채우고, 스크롤에 맞춰 카메라가 앞으로 나아갑니다.
+ */
+.film {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+  background: var(--mist);
+}
+.film picture,
+.film-poster,
+.film-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.film-poster,
+.film-video {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+.film-video {
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.story.film-ready .film-video {
+  opacity: 1;
+}
+.story[data-view='film'] .film {
+  opacity: 1;
+}
+.story[data-view='film'] .scene {
+  opacity: 0;
+}
+
+/* 무대: 데스크톱은 전체 화면 (모바일은 아래 미디어쿼리) */
+@media (min-width: 1024px) {
+  .story[data-view='film']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 0%;
+    --ft: 0%;
+    --fw: 100%;
+    --fh: 100%;
+    --fr: 0px;
+  }
+}
+
+/* 상태 칩: 화면 오른쪽 위 (SYSTEM NORMAL → RISK DETECTED) */
+.story[data-view='film'] .hud {
+  opacity: 1;
+  left: auto;
+  right: 32px;
+  top: calc(var(--header-h) + 24px);
+  width: auto;
+}
+.story[data-view='film'] .hud-rows {
+  display: none;
+}
+
+/* 텍스트 가독용 스크림 */
+.story[data-view='film'] .scrim {
+  opacity: 1;
+}
+
+@media (min-width: 1024px) {
+  /* 작동 과정 문구: 화면 왼쪽 가운데에 고정, 단계가 바뀔 때 교체 */
+  .story.is-ready .layout--film .step-inner {
+    position: fixed;
+    z-index: 3;
+    left: var(--gutter);
+    top: calc(50% + var(--header-h) / 2);
+    bottom: auto;
+    translate: 0 -50%;
+    width: min(36vw, 520px);
+    opacity: 0;
+    transform: translateY(18px);
+    pointer-events: none;
+    transition: opacity 480ms var(--ease), transform 640ms var(--ease);
+  }
+  .story.is-ready .layout--film.is-active .step-inner {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 100ms;
+  }
+  .story.is-ready[data-layout='film'] .step:not(.is-active) .step-inner {
+    opacity: 0;
+  }
+  .layout--film .t-h3 {
+    font-size: clamp(2rem, 1.3rem + 2vw, 3.25rem);
+  }
+  .story[data-view='film'] .scrim {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.93) 0%, rgba(255, 255, 255, 0.78) 28%, rgba(255, 255, 255, 0) 52%);
+  }
+}
+
+@media (max-width: 1023px) {
+  /* 작동 과정: 상단 16:9 패널 */
+  .story[data-view='film']:not([data-layout='full']):not([data-view='cta']) .frame {
+    --fl: 12px;
+    --ft: calc(var(--header-h) + 8px);
+    --fw: calc(100% - 24px);
+    --fh: calc((100vw - 24px) * 0.5625);
+    --fr: 16px;
+  }
+  /* 첫 화면: 전체 화면 */
+  .story[data-view='film'][data-layout='full']:not([data-view='cta']) .frame,
+  .story[data-view='film']:not([data-layout]):not([data-view='cta']) .frame {
+    --fl: 0%;
+    --ft: 0%;
+    --fw: 100%;
+    --fh: 100%;
+    --fr: 0px;
+  }
+  .story[data-view='film'][data-layout='full'] .film-poster,
+  .story[data-view='film'][data-layout='full'] .film-video {
+    object-position: 58% 50%;
+  }
+  .story[data-view='film']:not([data-layout='full']) .scrim {
+    opacity: 0;
+  }
+  .story[data-view='film'] .hud {
+    right: 20px;
+    top: calc(var(--header-h) + 16px);
+  }
+  .story[data-view='film']:not([data-layout='full']) .hud {
+    right: 22px;
+    top: calc(var(--header-h) + 18px);
+  }
+}
+
+/* 스크롤을 내리면 장면 문구가 사라짐 — 각 Step 진행률(--sp)의 뒤쪽에서 서서히 투명해집니다 */
+@media (min-width: 1024px) {
+  .story.is-ready .layout--film.is-active .step-inner {
+    opacity: calc(1 - clamp(0, (var(--sp, 0) - 0.62) / 0.26, 1));
+    transform: translateY(calc(clamp(0, (var(--sp, 0) - 0.62) / 0.26, 1) * -18px));
+    transition: opacity 160ms linear, transform 160ms linear;
+  }
+}
+.story.is-ready #hero.is-active .step-inner {
+  /* --hp: 첫 화면 스크롤 진행률 (맨 위 0 → 다음 장면 1) — 모든 화면 크기에서 같은 기준 */
+  opacity: calc(1 - clamp(0, (var(--hp, 0) - 0.35) / 0.45, 1));
+  transform: translateY(calc(clamp(0, (var(--hp, 0) - 0.35) / 0.45, 1) * -24px));
+}
+
+/* 첫 화면 대기 반복 영상: 스크롤을 시작하면 스크롤 영상으로 자연스럽게 넘어감 (같은 카메라 위치) */
+.film-loop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  opacity: 0;
+  transition: opacity 450ms ease;
+  pointer-events: none;
+}
+.story.film-loop-ready.film-idle[data-view='film'] .film-loop { opacity: 1; }
+@media (max-width: 1023px) {
+  .story[data-view='film'][data-layout='full'] .film-loop { object-position: 58% 50%; }
+}
+
+/* 첫 화면 버튼: 컨설팅 받기 (GRIB 메인 컬러) */
+.hero-cta {
+  align-self: flex-start;
+  justify-self: start;
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 28px;
+  padding: 15px 22px 15px 28px;
+  border-radius: 999px;
+  background: var(--grib-blue);
+  color: #fff;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: 0 10px 26px rgba(0, 125, 203, 0.32);
+  transition: background 200ms ease, transform 200ms var(--ease), box-shadow 200ms ease;
+}
+.hero-cta svg { transition: transform 200ms var(--ease); }
+.hero-cta:hover { background: #0069ad; transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0, 125, 203, 0.38); }
+.hero-cta:hover svg { transform: translateX(3px); }
+.hero-cta:focus-visible { outline: 3px solid rgba(0, 125, 203, 0.35); outline-offset: 3px; }
+@media (max-width: 1023px) {
+  .hero-cta { margin-top: 18px; padding: 13px 18px 13px 22px; font-size: 1rem; }
+}
+
+/* 작동 과정 단계 위 영역 표시 */
+.op-kicker {
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--grib-blue);
+  letter-spacing: 0.02em;
+}
+.op-kicker span { color: #8b95a1; margin-left: 4px; }
+.op-kicker--fire { color: #e8590c; }
+.op-kicker--air { color: var(--grib-blue); }
+.op-kicker--platform { color: #191f28; }

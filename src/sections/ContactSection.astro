@@ -1,0 +1,69 @@
+---
+/** 상담 신청 — 스토리가 끝난 뒤 일반 흐름으로 이어지는 리드 폼 */
+import { contact } from '../data/content';
+import { site } from '../data/site';
+---
+
+<section id="contact" class="contact" aria-labelledby="contact-title">
+  <div class="contact-intro">
+    <h2 id="contact-title" class="t-h2">{contact.heading}</h2>
+    <p class="t-lead pre-d">{contact.body}</p>
+    <dl class="contact-direct">
+      <div><dt>전화</dt><dd><a href={`tel:${site.tel.replace(/-/g, '')}`}>{site.tel}</a></dd></div>
+      <div><dt>이메일</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+    </dl>
+  </div>
+
+  <form
+    class="contact-form"
+    data-contact-form
+    data-endpoint={site.contactEndpoint}
+    data-email={site.email}
+    data-success={contact.success}
+    data-error={contact.error}
+    action={site.contactEndpoint || `mailto:${site.email}`}
+    method="post"
+    novalidate={false}
+  >
+    <div class="field">
+      <label for="f-company">회사·기관명</label>
+      <input id="f-company" name="company" required autocomplete="organization" />
+    </div>
+    <div class="field">
+      <label for="f-name">담당자명</label>
+      <input id="f-name" name="name" required autocomplete="name" />
+    </div>
+    <div class="field">
+      <label for="f-phone">연락처</label>
+      <input id="f-phone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" />
+    </div>
+    <div class="field">
+      <label for="f-email">이메일</label>
+      <input id="f-email" name="email" type="email" required autocomplete="email" />
+    </div>
+    <div class="field">
+      <label for="f-facility">시설 유형</label>
+      <select id="f-facility" name="facility">
+        {contact.facilityTypes.map((t) => <option>{t}</option>)}
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-sites">사업장 수</label>
+      <select id="f-sites" name="sites">
+        {contact.sitesOptions.map((t) => <option>{t}</option>)}
+      </select>
+    </div>
+    <div class="field field--full">
+      <label for="f-message">현재 주방 환경 <span>(선택)</span></label>
+      <textarea id="f-message" name="message" rows="4" placeholder="조리기구 종류와 대수, 기존 가스 설비, 설치 희망 시기 등을 적어주세요."></textarea>
+    </div>
+    <label class="consent field--full">
+      <input type="checkbox" name="consent" required />
+      <span>{contact.consent}</span>
+    </label>
+    <div class="field--full form-actions">
+      <button type="submit" class="submit">{contact.submit}</button>
+      <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+    </div>
+  </form>
+</section>

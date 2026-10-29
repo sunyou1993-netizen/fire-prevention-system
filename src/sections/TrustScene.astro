@@ -1,0 +1,56 @@
+---
+/**
+ * 검증 — 수상(·특허) + 주요 고객사 로고.
+ * 특허·수상 이미지: public/proofs/ 에 image 경로대로 넣으면 표시됩니다. placeholder 항목은 site.showPlaceholders=false 일 때 숨김.
+ */
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import Step from '../components/ui/Step.astro';
+import { trust } from '../data/content';
+import { site } from '../data/site';
+
+const has = (p: string) => existsSync(join(process.cwd(), 'public', p.replace(/^\//, '')));
+const proofs = trust.proofs.filter((p) => site.showPlaceholders || !p.placeholder);
+---
+
+<section class="scene-sec tr-sec" aria-labelledby="trust-title">
+  <Step step={trust.step} layout="carousel" class="tr-step">
+    <div class="tr-wrap">
+      <header class="tr-head">
+        <div>
+          <p class="sec-kicker">{trust.kicker}</p>
+          <h2 id="trust-title" class="sec-title">
+            {trust.heading.map((l, i) => <span class:list={{ 'sec-accent': i === 1 }}>{l}</span>)}
+          </h2>
+        </div>
+        <ul class="tr-proofs">
+          {
+            proofs.map((p) => (
+              <li class="tr-proof">
+                {has(p.image) ? (
+                  <img class="tr-proof-img" src={p.image} alt={p.imageAlt} loading="lazy" decoding="async" />
+                ) : (
+                  <span class="tr-proof-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5" /><path d="m8.6 13.6-1.6 7 5-2.6 5 2.6-1.6-7" /></svg>
+                  </span>
+                )}
+                <span class="tr-proof-txt">
+                  <small>{p.kind} · {p.body}</small>
+                  <b>{p.title}</b>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </header>
+
+      <figure class="tr-customers">
+        <figcaption>주요 고객사</figcaption>
+        <picture class="tr-logos">
+          <source srcset="/logos/customers.webp" type="image/webp" />
+          <img src="/logos/customers.png" alt={`주요 고객사: ${trust.customerNames.join(', ')}`} width="1099" height="516" loading="lazy" decoding="async" />
+        </picture>
+      </figure>
+    </div>
+  </Step>
+</section>

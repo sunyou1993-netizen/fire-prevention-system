@@ -1,0 +1,159 @@
+/*
+ * Desktop scene layouts (1024px 이상)
+ *
+ * 장면마다 무대(Frame)와 텍스트의 배치를 바꿔 같은 화면이 반복되지 않게 합니다.
+ * 무대는 .story[data-layout] 값에 따라 위치·크기가 전환되고(오브젝트는 그대로 이어짐),
+ * 텍스트는 Step 의 layout 클래스에 따라 배치됩니다.
+ *
+ *   split-left   텍스트 왼쪽 · 무대 오른쪽          — 작동 과정, 확장 프로세스
+ *   split-right  무대 왼쪽 · 텍스트 오른쪽          — 운영 사례, 문제→대응, 신뢰
+ *   statement    큰 헤드라인 중앙 · 무대는 아래 밴드  — 장면 도입부
+ *   stack-top    메시지 상단 중앙 · 무대 아래 와이드  — 가치 01~03
+ *   stack-bottom 무대 상단 와이드 · 텍스트 하단 2단   — WHY GRIB 구조도
+ *
+ * statement / stack-* 의 텍스트는 화면에 고정되고 활성 Step 만 보입니다
+ * (텍스트가 무대 위를 지나가며 겹치지 않도록). JS 가 없으면 일반 흐름으로 읽힙니다.
+ * 모바일(1023px 이하)은 모든 장면이 "무대 위 · 텍스트 아래" 로 동일합니다.
+ */
+
+@media (min-width: 1024px) {
+  /* ---------- Frame (무대) 위치 ---------- */
+  .story[data-layout='split-right']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 4%;
+    --fw: 56%;
+  }
+  .story[data-layout='statement']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 13%;
+    --fw: 74%;
+    --ft: 50vh;
+    --fh: 46vh;
+  }
+  .story[data-layout='stack-top']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 7%;
+    --fw: 86%;
+    --ft: calc(var(--header-h) + 30vh);
+    --fh: calc(100vh - var(--header-h) - 34vh);
+  }
+  .story[data-layout='stack-bottom']:not([data-view='full']):not([data-view='cta']) .frame {
+    --fl: 4%;
+    --fw: 92%;
+    --ft: calc(var(--header-h) + 2vh);
+    --fh: calc(100vh - var(--header-h) - 41vh);
+  }
+
+  /* 와이드 무대에서 구조도는 가로로 더 넓게 */
+  .story[data-layout='stack-bottom'] .scene {
+    --sw: 100cqw;
+  }
+
+  /* ---------- 텍스트: split-right ---------- */
+  .layout--split-right {
+    justify-content: flex-end;
+  }
+
+  /* ---------- 텍스트: 고정형 (statement / stack-top / stack-bottom) ---------- */
+  .story.is-ready :is(.layout--statement, .layout--stack-top, .layout--stack-bottom) .step-inner {
+    position: fixed;
+    z-index: 3;
+    left: var(--gutter);
+    right: var(--gutter);
+    width: auto;
+    max-width: none;
+    opacity: 0;
+    transform: translateY(18px);
+    pointer-events: none;
+    transition: opacity 480ms var(--ease), transform 640ms var(--ease);
+  }
+  .story.is-ready :is(.layout--statement, .layout--stack-top, .layout--stack-bottom).is-active .step-inner {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 120ms;
+  }
+
+  /* statement — 장면을 여는 큰 문장 */
+  .layout--statement {
+    justify-content: center;
+    text-align: center;
+  }
+  .layout--statement .step-inner {
+    width: min(1040px, 84vw);
+    justify-items: center;
+  }
+  .story.is-ready .layout--statement .step-inner {
+    top: calc(var(--header-h) + 9vh);
+    margin: 0 auto;
+    width: min(1040px, 84vw);
+  }
+  .layout--statement .t-h2 {
+    font-size: clamp(2.75rem, 1.4rem + 3.8vw, 5.25rem);
+    line-height: 1.14;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+  .layout--statement .t-lead {
+    margin-inline: auto;
+  }
+
+  /* stack-top — 한 줄 메시지 + 와이드 무대 */
+  .layout--stack-top {
+    justify-content: center;
+    text-align: center;
+  }
+  .layout--stack-top .step-inner {
+    width: min(860px, 80vw);
+    justify-items: center;
+    gap: 12px;
+  }
+  .story.is-ready .layout--stack-top .step-inner {
+    top: calc(var(--header-h) + 5vh);
+    margin: 0 auto;
+    width: min(860px, 80vw);
+  }
+  .layout--stack-top .t-h3 {
+    font-size: clamp(2.25rem, 1.4rem + 2.4vw, 3.5rem);
+  }
+
+  /* stack-bottom — 무대 아래 2단: 제목 | 설명 */
+  .layout--stack-bottom .step-inner {
+    width: 100%;
+    max-width: 1280px;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    column-gap: clamp(32px, 5vw, 96px);
+    row-gap: 6px;
+    align-items: end;
+  }
+  .story.is-ready .layout--stack-bottom .step-inner {
+    bottom: 4vh;
+  }
+  .layout--stack-bottom .step-inner > * {
+    grid-column: 1;
+  }
+  .layout--stack-bottom .step-inner > :is(.t-lead, .patents) {
+    grid-column: 2;
+  }
+  .layout--stack-bottom .step-inner > .t-lead {
+    grid-row: 1 / span 2;
+    align-self: end;
+    max-width: 40em;
+  }
+  .layout--stack-bottom .step-inner > .patents {
+    grid-row: 3;
+    grid-template-columns: 1fr 1fr;
+  }
+  .layout--stack-bottom .t-h2 {
+    font-size: clamp(2rem, 1.2rem + 2vw, 3rem);
+  }
+  .layout--stack-bottom .t-statement {
+    grid-column: 1 / -1;
+    font-size: clamp(1.75rem, 1.1rem + 1.8vw, 2.75rem);
+  }
+}
+
+
+@media (min-width: 1024px) {
+  /* 고정형 장면에서는 앞뒤 장면의 흐린 텍스트가 겹쳐 보이지 않게 숨김 */
+  .story.is-ready:is([data-layout='statement'], [data-layout='stack-top'], [data-layout='stack-bottom']) .step:not(.is-active) .step-inner {
+    opacity: 0;
+  }
+}

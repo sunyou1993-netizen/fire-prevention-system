@@ -1,0 +1,29 @@
+---
+/**
+ * FINAL CTA 무대 — 실제 운영 중인 단체급식 주방 사진.
+ * 처음 위험이 발생했던 주방이, 마지막에는 모든 시스템이 정상인 실제 현장으로 돌아옵니다.
+ *
+ * 사진 교체: src/data/content.ts → cta.photo (import 경로만 바꾸면 AVIF/WebP 자동 생성)
+ * 초점 위치: cta.photoFocus (object-position) — 조리솥과 조리원이 화면 중앙~우측에 오도록
+ */
+import { Picture } from 'astro:assets';
+import { cta } from '../../data/content';
+---
+
+<div class="cta-visual">
+  <Picture
+    class="cta-photo"
+    src={cta.photo}
+    alt={cta.photoAlt}
+    formats={['avif', 'webp']}
+    widths={[640, 960, 1280, 1672]}
+    sizes="100vw"
+    quality={72}
+    fallbackFormat="jpg"
+    loading="lazy"
+    decoding="async"
+    fetchpriority="low"
+    style={`--focus:${cta.photoFocus};--focus-m:${cta.photoFocusMobile}`}
+  />
+  <div class="cta-overlay"></div>
+</div>

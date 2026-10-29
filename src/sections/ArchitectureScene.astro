@@ -1,0 +1,169 @@
+---
+/**
+ * SCENE 06 — 시스템 구성도 (Isometric System Architecture)
+ * 구성도 이미지 위에 "실제로 작동 중인" 현장 움직임을 얹습니다.
+ *   끓는 국·증기(canvas) · Radar 스캔 · IR 측정선 · 데이터 신호(SVG) · 위험 이벤트 데모(정상 → 온도 상승 → 위험 감지 → 자동 대응 → 정상 복귀)
+ * 장비 자체는 움직이지 않습니다. 빨간색은 위험 이벤트 동안에만 나타납니다.
+ * 좌표는 이미지 픽셀(1672×671) 기준 — 이미지를 바꾸면 아래 경로 좌표도 함께 맞춰 주세요.
+ * 스크립트: src/scripts/architecture.ts
+ */
+import Step from '../components/ui/Step.astro';
+import { architecture as a } from '../data/content';
+const { w, h } = a.media;
+const pct = (x: number, y: number) => `left:${((x / w) * 100).toFixed(3)}%;top:${((y / h) * 100).toFixed(3)}%`;
+const box = (x: number, y: number, bw: number, bh: number) => `${pct(x, y)};width:${((bw / w) * 100).toFixed(3)}%;height:${((bh / h) * 100).toFixed(3)}%`;
+
+/* 데이터 경로 (이미지 속 연결선 위) */
+const P = {
+  // 이미지 속 파란 연결선 좌표(픽셀 측정값)에 맞춘 경로 · 모서리는 이미지처럼 둥글게
+  radar: 'M290,98 C370,132 480,130 600,130 C700,130 751.5,166 751.5,224 Q751.5,234 761.5,234 L829,234',
+  ir: 'M584,112 C680,112 751.5,150 751.5,224 Q751.5,234 761.5,234 L829,234',
+  valve: 'M835,263 L791.5,263 Q781.5,263 781.5,273 L781.5,456 Q781.5,466 771.5,466 L227,466 Q217,466 217,456 L217,402',
+  beacon: 'M835,263 L791.5,263 Q781.5,263 781.5,273 L781.5,456 Q781.5,466 771.5,466 L616,466',
+  ctrlGw: 'M934.5,182 L934.5,157 Q934.5,147 944.5,147 L1066,147',
+  gwSrv: 'M1182,147.5 L1339,147.5 Q1349,147.5 1349,157.5 L1349,205.5 L1456,205.5',
+  srvMon: 'M1349,205.5 L1349,338',
+  airIn: 'M901.5,397 L901.5,372.5 Q901.5,362.5 911.5,362.5 L1052.5,362.5 L1052.5,322.5 L1028.5,322.5 Q1018.5,322.5 1018.5,312.5 L1018.5,244 Q1018.5,234 1008.5,234 L974,234',
+  ctrlFan: 'M974,234 L1008.5,234 Q1018.5,234 1018.5,244 L1018.5,312.5 Q1018.5,322.5 1028.5,322.5 L1052.5,322.5 L1052.5,396',
+  ctrlPur: 'M974,234 L1008.5,234 Q1018.5,234 1018.5,244 L1018.5,312.5 Q1018.5,322.5 1028.5,322.5 L1183,322.5 Q1193,322.5 1193,332.5 L1193,360',
+};
+/* 신호가 도착하면 살짝 퍼지는 노드 위치 */
+const nodes = { controller: [902, 236], gateway: [1122, 150], server: [1520, 182], monitor: [1440, 412], fan: [1050, 402], purifier: [1190, 360], valve: [217, 402], beacon: [600, 466] };
+---
+
+<section class="scene-sec arch-sec" aria-labelledby="arch-title">
+  <Step step={a.step} layout="carousel" class="arch-step">
+    <div class="arch" data-arch data-phase="normal">
+      <header class="arch-head">
+        <div>
+          <p class="sec-kicker">{a.kicker}</p>
+          <h2 id="arch-title" class="sec-title arch-title">
+            {a.heading.map((l, i) => <span class:list={{ 'sec-accent': i === 1 }}>{l}</span>)}
+          </h2>
+        </div>
+        <p class="sec-sub arch-sub pre-d">{a.sub}</p>
+      </header>
+
+      <div class="arch-scroll">
+        <div class="arch-stage" style={`aspect-ratio:${w}/${h}`}>
+          <picture>
+            <source srcset={a.media.image} type="image/webp" />
+            <img class="arch-img" src={a.media.fallback} alt={a.alt} width={w} height={h} loading="lazy" decoding="async" />
+          </picture>
+
+          <!-- 끓는 국 · 증기 · 열기 -->
+          <canvas class="arch-fx" data-arch-fx aria-hidden="true"></canvas>
+
+          <!-- 위험 이벤트 때만 나타나는 원본 레이어 (IR 붉은 측정 영역 · 경광등 점등) -->
+          <img class="arch-patch arch-patch--ir" src={a.media.irRed} alt="" style={box(435, 93, 221, 189)} loading="lazy" />
+          <img class="arch-patch arch-patch--beacon" src={a.media.beaconOn} alt="" style={box(480, 334, 217, 237)} loading="lazy" />
+
+          <svg class="arch-svg" viewBox={`0 0 ${w} ${h}`} aria-hidden="true">
+            <defs>
+              {Object.entries(P).map(([id, d]) => <path id={`ap-${id}`} d={d} />)}
+              <radialGradient id="ap-glow"><stop offset="0" stop-color="#fff" stop-opacity=".9" /><stop offset="1" stop-color="#fff" stop-opacity="0" /></radialGradient>
+            </defs>
+
+            <!-- 센서 → 컨트롤러 연결(이미지에 없는 구간) -->
+            <use href="#ap-radar" class="ap-guide" />
+            <use href="#ap-ir" class="ap-guide" />
+
+            <!-- 위험 경로 강조 -->
+            <g class="ap-alert">
+              <use href="#ap-ir" />
+              <use href="#ap-valve" />
+              <use href="#ap-beacon" />
+              <use href="#ap-ctrlGw" />
+              <use href="#ap-gwSrv" />
+              <use href="#ap-srvMon" />
+            </g>
+
+            <!-- Radar: 은은한 스캔 웨이브 -->
+            <g class="ap-radar">
+              <path d="M222,150 Q282,170 342,150" />
+              <path d="M207,185 Q275,210 343,183" />
+              <path d="M192,220 Q268,250 344,216" />
+              <circle cx="282" cy="84" r="4" class="ap-led" />
+            </g>
+
+            <!-- IR: 얇은 측정선 + 측정점 -->
+            <g class="ap-ir">
+              <line x1="566" y1="118" x2="522" y2="300" />
+              <circle cx="522" cy="300" r="10" class="ap-ir-ring" />
+              <circle cx="522" cy="300" r="3.5" class="ap-ir-dot" />
+              <circle cx="566" cy="116" r="4" class="ap-ir-emit" />
+            </g>
+
+            <!-- 가스 밸브 상태 LED -->
+            <g class="ap-valve">
+              <circle cx="148" cy="362" r="9" class="ap-valve-halo" />
+              <circle cx="148" cy="362" r="4.5" class="ap-valve-led" />
+            </g>
+
+            <!-- 노드 도착 표시 -->
+            <g class="ap-nodes">
+              {Object.entries(nodes).map(([id, [x, y]]) => <circle cx={x} cy={y} r="18" data-node={id} />)}
+            </g>
+
+            <!-- 데이터 신호: 연결선을 따라 짧은 빛이 순서대로 이동 (scripts/architecture.ts) -->
+            <g class="ap-pulses">
+              {Object.keys(P).map((id) => (
+                <g class="ap-pulse" data-pulse={id}>
+                  <use href={`#ap-${id}`} class="ap-pulse-halo" />
+                  <use href={`#ap-${id}`} class="ap-pulse-core" />
+                </g>
+              ))}
+            </g>
+          </svg>
+
+          <!-- 경광등 빛 -->
+          <span class="arch-beacon-glow" style={pct(590, 448)}></span>
+
+          <!-- 표면 온도 (예시) -->
+          <div class="arch-temp" style={pct(626, 262)}>
+            <span>조리기구 표면 온도</span>
+            <b class="tnum"><i data-arch-temp>{a.temp.normal}</i>℃</b>
+            <small data-arch-temp-state>정상</small>
+          </div>
+
+          <!-- 관제 상태 (예시) -->
+          <div class="arch-status" style={pct(1440, 388)}>
+            <span class="arch-status-dot"></span>
+            <span class="arch-st arch-st--normal">전체 정상</span>
+            <span class="arch-st arch-st--danger">SITE 01 · 과열 감지</span>
+            <span class="arch-st arch-st--response">가스 밸브 자동 차단</span>
+            <span class="arch-st arch-st--recovery">조치 완료 · 정상</span>
+          </div>
+
+          <span class="arch-example">작동 예시</span>
+        </div>
+      </div>
+      <p class="arch-swipe">좌우로 밀어서 전체 구성을 볼 수 있습니다</p>
+
+      <!-- 기기 범례 -->
+      <div class="arch-legend">
+        {
+          a.groups.map((g) => (
+            <div class={`arch-group arch-group--${g.id}`}>
+              <b>{g.name}</b>
+              <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- 작동 단계 (정상 감시만 · 숨김) -->
+      <ol class="arch-phases" aria-hidden="true" hidden>
+        {
+          a.phases.map((p, i) => (
+            <li class="arch-phase" data-phase-id={p.id} data-dur={p.dur}>
+              <span class="arch-phase-bar"><i></i></span>
+              <b><span class="tnum">0{i + 1}</span> {p.label}</b>
+              <small>{p.desc}</small>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </Step>
+</section>

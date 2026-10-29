@@ -1,0 +1,64 @@
+/* 검증 — 수상 + 주요 고객사 */
+.tr-sec { background: #fff; }
+.tr-step,
+.story.is-ready .tr-step .step-inner,
+.tr-step .step-inner {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  opacity: 1;
+  background: none;
+  box-shadow: none;
+}
+.tr-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: calc(var(--header-h) + 96px) var(--gutter) 128px;
+  display: grid;
+  gap: 64px;
+}
+.tr-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 32px;
+}
+.tr-proofs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.tr-proof {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px 14px 14px;
+  border-radius: 18px;
+  background: var(--grib-blue-tint);
+}
+.tr-proof-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--grib-blue);
+}
+.tr-proof-mark svg { width: 24px; height: 24px; }
+.tr-proof-img { flex: none; width: 64px; height: 48px; object-fit: contain; border-radius: 8px; background: #fff; }
+.tr-proof-txt { display: grid; gap: 2px; }
+.tr-proof-txt small { font-size: 0.875rem; color: var(--grib-blue-deep); font-weight: 600; }
+.tr-proof-txt b { font-size: 1.0625rem; color: #191f28; letter-spacing: -0.02em; }
+.tr-customers { margin: 0; display: grid; gap: 24px; padding-top: 40px; border-top: 1px solid var(--line); }
+.tr-customers figcaption { font-size: 1rem; font-weight: 700; color: #4e5968; }
+.tr-logos { display: block; }
+.tr-logos img { display: block; width: 100%; max-width: 1100px; height: auto; margin: 0 auto; }
+
+@media (max-width: 1023px) {
+  .tr-wrap { padding: calc(var(--header-h) + 48px) 20px 80px; gap: 40px; }
+  .tr-head { grid-template-columns: 1fr; }
+  .tr-proof-txt b { font-size: 1rem; }
+  /* 로고가 작아지지 않도록 모바일에서는 가로로 넘겨 봅니다 */
+  .tr-logos { overflow-x: auto; margin: 0 -20px; padding: 0 20px 6px; -webkit-overflow-scrolling: touch; }
+  .tr-logos img { width: 760px; max-width: none; }
+}

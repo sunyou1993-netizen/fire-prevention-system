@@ -1,0 +1,72 @@
+---
+/**
+ * 단체급식 주방 화재 예방 + 공기질 통합관리 솔루션 상세페이지
+ *
+ * 구조: 하나의 sticky Stage(주방 Scene) 위로 Scene 섹션의 Step 들이 스크롤됩니다.
+ * Scene 순서를 바꾸거나 빼도 Stage 는 각 Step 의 view/flags 만 따릅니다.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import Stage from '../components/stage/Stage.astro';
+import HeroScene from '../sections/HeroScene.astro';
+import ProblemScene from '../sections/ProblemScene.astro';
+import OperationScene from '../sections/OperationScene.astro';
+import CaseStudyScene from '../sections/CaseStudyScene.astro';
+import ArchitectureScene from '../sections/ArchitectureScene.astro';
+import ScaleScene from '../sections/ScaleScene.astro';
+import TrustScene from '../sections/TrustScene.astro';
+import CTASection from '../sections/CTASection.astro';
+import ContactSection from '../sections/ContactSection.astro';
+import '../styles/stage.css';
+import '../styles/story.css';
+import '../styles/layouts.css';
+import '../styles/beyond.css';
+import '../styles/film.css';
+import '../styles/case.css';
+import '../styles/scale.css';
+import '../styles/trust.css';
+import '../styles/architecture.css';
+import '../styles/sections.css';
+import '../styles/typography.css';
+---
+
+<BaseLayout>
+  <Header />
+  <main id="main">
+    <div class="story" data-view="full" data-flags="">
+      <Stage />
+      <div class="story-track">
+        <HeroScene />
+        <OperationScene />
+        <ProblemScene />
+        <ArchitectureScene />
+        <CaseStudyScene />
+        <TrustScene />
+        <ScaleScene />
+        <CTASection />
+      </div>
+    </div>
+    <ContactSection />
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  import { initStory, initKitchenVideo } from '../scripts/story';
+  import { initContactForm } from '../scripts/contact';
+  import { initCarousel } from '../scripts/carousel';
+  import { initArchitecture } from '../scripts/architecture';
+  import { initPageScroll } from '../scripts/page-scroll';
+
+  const root = document.querySelector<HTMLElement>('.story');
+  if (root) {
+    initStory(root);
+    initKitchenVideo(root);
+    initCarousel(root);
+    initArchitecture();
+    initPageScroll();
+  }
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  if (form) initContactForm(form);
+</script>
