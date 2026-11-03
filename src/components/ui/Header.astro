@@ -17,7 +17,7 @@ const menuHere = (m: (typeof gnb)[number]) => (path !== '/' && path.startsWith(m
 
 <header class="gnb" data-gnb>
   <div class="gnb-bar">
-    <a href={site.homepage} class="gnb-logo" aria-label={`${site.brand} 홈페이지`}>
+    <a href={site.pages.home} class="gnb-logo" aria-label={`${site.brand} 홈페이지`}>
       <Logo />
     </a>
 
@@ -27,7 +27,7 @@ const menuHere = (m: (typeof gnb)[number]) => (path !== '/' && path.startsWith(m
           gnb.map((m, i) => {
             return (
               <li>
-                <a href={m.href} class:list={['gnb-top', { 'is-current': menuHere(m) }]} aria-current={path === m.href ? 'page' : undefined} data-gnb-top={i}>
+                <a href={m.link ?? m.href} class:list={['gnb-top', { 'is-current': menuHere(m) }]} aria-current={path === m.href ? 'page' : undefined} data-gnb-top={i}>
                   {m.label}
                 </a>
               </li>
@@ -84,7 +84,7 @@ const menuHere = (m: (typeof gnb)[number]) => (path !== '/' && path.startsWith(m
           <details class="gnb-acc" open={menuHere(m)}>
             <summary>{m.label}</summary>
             <div class="gnb-acc-body">
-              <a href={m.href} class="gnb-acc-all">{m.label} 전체 보기 →</a>
+              <a href={m.link ?? m.href} class="gnb-acc-all">{m.label} 전체 보기 →</a>
               {m.groups.map((g) => (
                 <div class="gnb-group">
                   {g.title && <p class="gnb-group-title">{g.title}</p>}
