@@ -113,3 +113,13 @@ Formspree, 사내 API, CRM 웹훅 주소를 넣으면 JSON 으로 POST 합니다
 - 앞뒤로 매끄럽게 움직이려면 모든 프레임이 키프레임이어야 합니다 (`-g 1`). 예:
   `ffmpeg -i src.mp4 -vf scale=1280:720 -c:v libx264 -crf 27 -g 1 -an -movflags +faststart kitchen-film-720.mp4`
 - 데이터 절약 모드에서는 영상을 불러오지 않고 첫 프레임 포스터만 보여줍니다.
+
+## 리뉴얼 페이지 주소 (서로 연결)
+
+| 페이지 | 주소 |
+| --- | --- |
+| HOME | https://grib-home.vercel.app/ |
+| 주방 화재·공기질 관리 (이 저장소) | https://grib-kitchen.vercel.app/ |
+| 스마트 시설점검 | https://grib-facility-inspection.vercel.app/ |
+
+GNB 링크 주소는 `src/data/site.ts` 의 `pages` 에서 바꿉니다.
