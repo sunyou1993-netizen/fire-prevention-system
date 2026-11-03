@@ -13,7 +13,7 @@ export const site = {
   /** 리뉴얼 페이지 주소 — GNB에서 서로 이동할 때 사용 (도메인 연결 후 grib.co.kr 경로로 교체) */
   pages: {
     home: 'https://grib-home.vercel.app/',
-    kitchen: 'https://grib-fire-prevention.vercel.app/',
+    kitchen: 'https://grib-kitchen.vercel.app/',
     facilityInspection: 'https://grib-facility-inspection.vercel.app/',
   },
   copyright: `Copyright © ${new Date().getFullYear()} Grib Co., Ltd. All Rights Reserved.`,
