@@ -528,3 +528,20 @@ const menuHere = (m: (typeof gnb)[number]) => (path !== '/' && path.startsWith(m
 
   
 </style>
+
+<style is:global>
+/* GNB 크기 기준 (참고: vdrobotics.co.kr) — 높이 70 · 메뉴 18px · 메뉴 좌우 30px · 알약형 버튼 35px */
+@media (min-width:1024px){
+  :root{--header-h:70px}
+  header.gnb .gnb-bar{padding-left:clamp(24px,3.2vw,56px);padding-right:clamp(24px,3.2vw,56px)}
+  header.gnb .gnb-logo{height:var(--header-h);padding:0;display:flex;align-items:center}
+  header.gnb .gnb-logo img{height:28px;width:auto}
+  header.gnb .gnb-menu{gap:0}
+  header.gnb .gnb-top{height:var(--header-h);padding:0 30px;font-size:18px;font-weight:400;letter-spacing:-.03em}
+  header.gnb .gnb-top::after{left:30px;right:30px}
+  header.gnb .gnb-util{gap:10px}
+  header.gnb .gnb-util .gnb-tel{height:35px;padding:0 16px;border-radius:999px;background:#F2F4F6;font-size:15px;font-weight:400;letter-spacing:-.02em}
+  header.gnb .gnb-util .gnb-tel:hover{background:#E8EBEE}
+  header.gnb .gnb-util .gnb-cta{height:35px;min-height:35px;padding:0 16px;border-radius:999px;font-size:15px;font-weight:400;letter-spacing:-.02em}
+}
+</style>
