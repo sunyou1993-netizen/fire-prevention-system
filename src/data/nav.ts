@@ -18,7 +18,7 @@ export const gnb: NavMenu[] = [
         { label: '설비·에너지 통합관리', href: '/solutions/facility-energy/' },
       ] },
       { title: '시설안전·관제', links: [
-        { label: '스마트 시설점검', href: '/solutions/facility-inspection/' },
+        { label: '스마트 시설점검', href: 'https://grib-facility-inspection.vercel.app/' },
         { label: '주방 화재·공기질 관리', href: '/', current: true },
         { label: '연구실 안전관제', href: '/solutions/lab-safety/' },
         { label: '분전반 화재예방', href: '/solutions/panel-fire/' },
@@ -60,7 +60,7 @@ export const gnb: NavMenu[] = [
         { label: '제조현장 안전·설비', href: '/cases/manufacturing/' },
       ] },
       { title: '시설안전·관제', links: [
-        { label: '시설점검', href: '/cases/facility-inspection/' },
+        { label: '시설점검', href: 'https://grib-facility-inspection.vercel.app/#case' },
         { label: '주방안전', href: '/#case' },
         { label: '연구실안전', href: '/cases/lab/' },
       ] },
