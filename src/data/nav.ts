@@ -4,13 +4,16 @@
  * 실제 페이지를 만들면 같은 주소의 .astro 파일을 추가하세요(그 파일이 우선합니다).
  * current: true 인 항목은 지금 보고 있는 페이지로 표시됩니다.
  */
+import { site } from './site';
+
 export interface NavLink { label: string; href: string; current?: boolean }
 export interface NavGroup { title?: string; links: NavLink[] }
-export interface NavMenu { label: string; href: string; intro: string; groups: NavGroup[] }
+/** link: GNB에서 실제로 이동할 주소(다른 리뉴얼 페이지). 없으면 href. href는 '준비 중' 페이지 생성에 쓰입니다. */
+export interface NavMenu { label: string; href: string; link?: string; intro: string; groups: NavGroup[] }
 
 export const gnb: NavMenu[] = [
   {
-    label: '솔루션', href: '/solutions/', intro: '산업현장부터 시설·교육 공간까지, 현장에 맞는 안전·관제 솔루션을 제공합니다.',
+    label: '솔루션', href: '/solutions/', link: `${site.pages.home}#solutions`, intro: '산업현장부터 시설·교육 공간까지, 현장에 맞는 안전·관제 솔루션을 제공합니다.',
     groups: [
       { title: '산업안전·설비', links: [
         { label: 'AI 산업안전 통합관제', href: '/solutions/ai-safety/' },
@@ -18,7 +21,7 @@ export const gnb: NavMenu[] = [
         { label: '설비·에너지 통합관리', href: '/solutions/facility-energy/' },
       ] },
       { title: '시설안전·관제', links: [
-        { label: '스마트 시설점검', href: 'https://grib-facility-inspection.vercel.app/' },
+        { label: '스마트 시설점검', href: site.pages.facilityInspection },
         { label: '주방 화재·공기질 관리', href: '/', current: true },
         { label: '연구실 안전관제', href: '/solutions/lab-safety/' },
         { label: '분전반 화재예방', href: '/solutions/panel-fire/' },
@@ -54,13 +57,13 @@ export const gnb: NavMenu[] = [
     ],
   },
   {
-    label: '도입사례', href: '/cases/', intro: '실제 현장에 적용된 그립 솔루션 사례입니다.',
+    label: '도입사례', href: '/cases/', link: `${site.pages.home}#references`, intro: '실제 현장에 적용된 그립 솔루션 사례입니다.',
     groups: [
       { title: '산업안전·설비', links: [
         { label: '제조현장 안전·설비', href: '/cases/manufacturing/' },
       ] },
       { title: '시설안전·관제', links: [
-        { label: '시설점검', href: 'https://grib-facility-inspection.vercel.app/#case' },
+        { label: '시설점검', href: '/cases/facility-inspection/' },
         { label: '주방안전', href: '/#case' },
         { label: '연구실안전', href: '/cases/lab/' },
       ] },
