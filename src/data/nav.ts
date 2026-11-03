@@ -63,7 +63,7 @@ export const gnb: NavMenu[] = [
         { label: '제조현장 안전·설비', href: '/cases/manufacturing/' },
       ] },
       { title: '시설안전·관제', links: [
-        { label: '시설점검', href: '/cases/facility-inspection/' },
+        { label: '시설점검', href: `${site.pages.facilityInspection}#case` },
         { label: '주방안전', href: '/#case' },
         { label: '연구실안전', href: '/cases/lab/' },
       ] },
