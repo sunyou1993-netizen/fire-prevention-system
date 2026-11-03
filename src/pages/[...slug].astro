@@ -35,7 +35,7 @@ const siblings = group?.links.filter((l) => l !== link) ?? [];
   <Header />
   <main id="main" class="np">
     <nav class="np-crumb" aria-label="현재 위치">
-      <a href="/">홈</a><span aria-hidden="true">›</span>
+      <a href={site.pages.home}>홈</a><span aria-hidden="true">›</span>
       {isDetail ? <a href={menu.href}>{menu.label}</a> : <span aria-current="page">{menu.label}</span>}
       {isDetail && group?.title && <><span aria-hidden="true">›</span><span>{group.title}</span></>}
       {isDetail && <><span aria-hidden="true">›</span><span aria-current="page">{link!.label}</span></>}
