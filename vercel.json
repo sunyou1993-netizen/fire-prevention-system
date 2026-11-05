@@ -1,6 +1,26 @@
 {
   "redirects": [
     {
+      "source": "/solutions/claix",
+      "destination": "https://grib-home.vercel.app/solutions/claix/",
+      "permanent": false
+    },
+    {
+      "source": "/solutions/claix/",
+      "destination": "https://grib-home.vercel.app/solutions/claix/",
+      "permanent": false
+    },
+    {
+      "source": "/solutions/claix-ai-board",
+      "destination": "https://grib-home.vercel.app/solutions/claix-ai-board/",
+      "permanent": false
+    },
+    {
+      "source": "/solutions/claix-ai-board/",
+      "destination": "https://grib-home.vercel.app/solutions/claix-ai-board/",
+      "permanent": false
+    },
+    {
       "source": "/company",
       "destination": "https://grib-home.vercel.app/company/",
       "permanent": false
