@@ -133,3 +133,6 @@ textarea {
 }
 h1, h2, h3, .t-display, .t-h3, .sec-title, .cc-title, .pb-h, .sc2-effects b, .sc2-trust b, .sc2-proc h3 { text-wrap: balance; }
 p, li, dd { text-wrap: pretty; }
+
+/* GNB: home·company·cases와 동일하게 하단 보더 없음 (높이 70px 통일) */
+.gnb, header.gnb.gnb { border-bottom: 0; }
