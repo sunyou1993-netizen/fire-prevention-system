@@ -1,0 +1,64 @@
+{
+  "redirects": [
+    {
+      "source": "/company",
+      "destination": "https://grib-home.vercel.app/company/",
+      "permanent": false
+    },
+    {
+      "source": "/company/",
+      "destination": "https://grib-home.vercel.app/company/",
+      "permanent": false
+    },
+    {
+      "source": "/company/about",
+      "destination": "https://grib-home.vercel.app/company/",
+      "permanent": false
+    },
+    {
+      "source": "/company/about/",
+      "destination": "https://grib-home.vercel.app/company/",
+      "permanent": false
+    },
+    {
+      "source": "/company/news",
+      "destination": "https://grib-home.vercel.app/company/#press",
+      "permanent": false
+    },
+    {
+      "source": "/company/news/",
+      "destination": "https://grib-home.vercel.app/company/#press",
+      "permanent": false
+    },
+    {
+      "source": "/company/location",
+      "destination": "https://grib-home.vercel.app/company/#contact",
+      "permanent": false
+    },
+    {
+      "source": "/company/location/",
+      "destination": "https://grib-home.vercel.app/company/#contact",
+      "permanent": false
+    },
+    {
+      "source": "/devices",
+      "destination": "https://grib-home.vercel.app/company/#devices",
+      "permanent": false
+    },
+    {
+      "source": "/devices/",
+      "destination": "https://grib-home.vercel.app/company/#devices",
+      "permanent": false
+    },
+    {
+      "source": "/cases",
+      "destination": "https://grib-home.vercel.app/cases/",
+      "permanent": false
+    },
+    {
+      "source": "/cases/",
+      "destination": "https://grib-home.vercel.app/cases/",
+      "permanent": false
+    }
+  ]
+}
