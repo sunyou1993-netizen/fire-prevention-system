@@ -34,7 +34,7 @@ export const gnb: NavMenu[] = [
     ],
   },
   {
-    label: '디바이스', href: '/devices/', intro: '그립이 직접 설계·제조하는 게이트웨이, 센서, 통신 모듈, 산업용 PC입니다.',
+    label: '디바이스', href: '/devices/', link: `${site.pages.home}company/#devices`, intro: '그립이 직접 설계·제조하는 게이트웨이, 센서, 통신 모듈, 산업용 PC입니다.',
     groups: [
       { title: '게이트웨이', links: [
         { label: '산업용 게이트웨이', href: '/devices/industrial-gateway/' },
@@ -57,7 +57,7 @@ export const gnb: NavMenu[] = [
     ],
   },
   {
-    label: '도입사례', href: '/cases/', link: `${site.pages.home}#references`, intro: '실제 현장에 적용된 그립 솔루션 사례입니다.',
+    label: '도입사례', href: '/cases/', link: `${site.pages.home}cases/`, intro: '실제 현장에 적용된 그립 솔루션 사례입니다.',
     groups: [
       { title: '산업안전·설비', links: [
         { label: '제조현장 안전·설비', href: '/cases/manufacturing/' },
@@ -73,12 +73,12 @@ export const gnb: NavMenu[] = [
     ],
   },
   {
-    label: '회사', href: '/company/', intro: '현장의 안전을 연결하는 기업, 그립입니다.',
+    label: '회사', href: '/company/', link: `${site.pages.home}company/`, intro: '현장의 안전을 연결하는 기업, 그립입니다.',
     groups: [
       { links: [
-        { label: '회사소개', href: '/company/about/' },
-        { label: '뉴스', href: '/company/news/' },
-        { label: '오시는 길', href: '/company/location/' },
+        { label: '회사소개', href: `${site.pages.home}company/` },
+        { label: '뉴스', href: `${site.pages.home}company/#press` },
+        { label: '오시는 길', href: `${site.pages.home}company/#contact` },
       ] },
     ],
   },
