@@ -71,6 +71,106 @@
       "permanent": false
     },
     {
+      "source": "/devices/industrial-gateway",
+      "destination": "https://grib-home.vercel.app/devices/industrial-gateway/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/industrial-gateway/",
+      "destination": "https://grib-home.vercel.app/devices/industrial-gateway/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/iot-gateway",
+      "destination": "https://grib-home.vercel.app/devices/iot-gateway/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/iot-gateway/",
+      "destination": "https://grib-home.vercel.app/devices/iot-gateway/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/lorawan-gateway",
+      "destination": "https://grib-home.vercel.app/devices/lorawan-gateway/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/lorawan-gateway/",
+      "destination": "https://grib-home.vercel.app/devices/lorawan-gateway/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/power-meter",
+      "destination": "https://grib-home.vercel.app/devices/power-meter/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/power-meter/",
+      "destination": "https://grib-home.vercel.app/devices/power-meter/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/vibration-tilt-sensor",
+      "destination": "https://grib-home.vercel.app/devices/vibration-tilt-sensor/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/vibration-tilt-sensor/",
+      "destination": "https://grib-home.vercel.app/devices/vibration-tilt-sensor/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/wireless-vibration-sensor",
+      "destination": "https://grib-home.vercel.app/devices/wireless-vibration-sensor/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/wireless-vibration-sensor/",
+      "destination": "https://grib-home.vercel.app/devices/wireless-vibration-sensor/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/flex-sensor",
+      "destination": "https://grib-home.vercel.app/devices/flex-sensor/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/flex-sensor/",
+      "destination": "https://grib-home.vercel.app/devices/flex-sensor/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/wireless-io",
+      "destination": "https://grib-home.vercel.app/devices/wireless-io/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/wireless-io/",
+      "destination": "https://grib-home.vercel.app/devices/wireless-io/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/interface-io",
+      "destination": "https://grib-home.vercel.app/devices/interface-io/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/interface-io/",
+      "destination": "https://grib-home.vercel.app/devices/interface-io/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/compact-server",
+      "destination": "https://grib-home.vercel.app/devices/compact-server/",
+      "permanent": false
+    },
+    {
+      "source": "/devices/compact-server/",
+      "destination": "https://grib-home.vercel.app/devices/compact-server/",
+      "permanent": false
+    },
+    {
       "source": "/cases",
       "destination": "https://grib-home.vercel.app/cases/",
       "permanent": false
