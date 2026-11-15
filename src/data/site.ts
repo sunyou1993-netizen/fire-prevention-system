@@ -6,7 +6,7 @@ export const site = {
   company: '(주)그립',
   brand: 'GRIB',
   platform: 'ALLSAFER',
-  address: '서울특별시 서초구 효령로 242 서영빌딩 5, 6층',
+  address: '서울특별시 서초구 효령로 242 서양빌딩 5, 6층',
   tel: '02-521-6542',
   email: 'manager@grib.co.kr',
   homepage: 'https://www.grib.co.kr',
@@ -21,7 +21,7 @@ export const site = {
   seo: {
     title: '단체급식 주방 화재 예방·공기질 통합관리 솔루션 | GRIB 그립',
     description:
-      '조리원 부재·과열·공기질을 실시간 감지하고 가스 자동 차단부터 환기·통합관제까지 연결하는 단체급식 주방 화재 예방 시스템. 누적 500개 점포 550건 설치.',
+      '조리원 부재·과열·공기질을 실시간 감지하고 가스 자동 차단부터 환기·통합관제까지 연결하는 단체급식 주방 화재 예방 시스템. 약 1,000개 급식 사업장 적용.',
     keywords: [
       '단체급식 주방 화재 예방',
       '주방 화재 예방 시스템',
