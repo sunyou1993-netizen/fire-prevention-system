@@ -162,7 +162,7 @@ export const caseStudy = {
   customerLogo: null as ImageMetadata | null,
   /** 헤더 옆 핵심 지표 */
   stats: [
-    { value: '약 300', unit: '개 급식 사업장', note: '2022년 12월 보도 기준' },
+    { value: '약 1,000', unit: '개 급식 사업장', note: '전국 급식 사업장 적용' },
     { value: '2020.06', unit: '협약', note: '5개 사업장 7개월 시범 운영 후' },
   ],
   cards: [
@@ -180,9 +180,9 @@ export const caseStudy = {
       title: '경광등과 경고음으로 현장에 즉시 알립니다',
     },
     {
-      media: 'stat', tone: 'blue', kicker: '2022년 12월 보도 기준',
-      title: '약 300개 사업장으로 확대하고 있습니다',
-      stat: { value: '약 300', unit: '개', note: '전 사업장 확대 추진', image: imgWideLine },
+      media: 'stat', tone: 'blue', kicker: '전국 적용 현황',
+      title: '약 1,000개 급식 사업장에 적용되어 있습니다',
+      stat: { value: '약 1,000', unit: '개', note: '전국 급식 사업장 적용', image: imgWideLine },
     },
     {
       media: 'quote', tone: 'gray', kicker: '안전관리 담당',
@@ -200,9 +200,9 @@ export const caseStudy = {
       quote: { text: '[실제 인터뷰 내용 확인 후 적용]', by: '아워홈 사업장 조리실장' },
     },
     {
-      media: 'total', kicker: '2025년 4월 기준 누적',
+      media: 'total', kicker: '전국 적용 현황',
       title: 'GRIB 주방화재 IoT 누적 설치 실적',
-      totals: [{ value: '500', unit: '개 점포' }, { value: '550', unit: '건 설치' }],
+      totals: [{ value: '약 1,000', unit: '개 급식 사업장' }],
     },
   ] as CaseCard[],
   sources: [
